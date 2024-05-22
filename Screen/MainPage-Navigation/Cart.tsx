@@ -19,18 +19,18 @@ export default function Cart() {
                     <Image source={{ uri: item.image }} style={{ width: 70, height: 70, borderRadius: 15 }} />
 
                     <View style={style.layout_item}>
-                        <Text style={style.name}>{item.name}</Text>
-                        <Text style={style.title}>{item.title}</Text>
-                        <Text style={style.price}>$ {item.price}</Text>
+                        <Text style={style.name_product}>{item.name}</Text>
+                        <Text style={style.title_product}>{item.title}</Text>
+                        <Text style={style.price_product}>$ {item.price}</Text>
                     </View>
 
                     <View style={{ alignSelf: 'flex-end' }}>
                         <View style={{ alignItems: 'center', flexDirection: 'row' }}>
-                            <TouchableOpacity style={{ borderWidth: 1, padding: 1 }}>
+                            <TouchableOpacity style={{  padding: 1 }}>
                                 <Image source={require('../Image/plus.png')} style={{ width: 15, height: 15 }} />
                             </TouchableOpacity>
                             <Text style={{ fontSize: 20, marginLeft: 10, marginRight: 10 }}>20</Text>
-                            <TouchableOpacity style={{ borderWidth: 1, padding: 1 }}>
+                            <TouchableOpacity style={{  padding: 1 }}> 
                                 <Image source={require('../Image/minus.png')} style={{ width: 15, height: 15 }} />
                             </TouchableOpacity>
                         </View>
@@ -49,6 +49,15 @@ export default function Cart() {
             <FlatList
                 data={data}
                 renderItem={renderItem} />
+            <View style= {{padding: 10}}>
+                <View style = {{flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 10}}>
+                    <Text style = {{fontSize: 20, fontWeight: 'bold', color: 'black'}}>Tổng tiền: </Text>
+                    <Text style = {{fontSize: 20, color: 'black'}}>20.000</Text>
+                </View>
+                <TouchableOpacity style = {{backgroundColor: '#c32003', padding: 10}}>
+                    <Text style= {{textAlign: 'center', color:'white'}}>Mua Hàng</Text>
+                </TouchableOpacity>
+            </View>
         </View>
     )
 }
@@ -72,19 +81,23 @@ const style = StyleSheet.create({
     layout_item: {
         marginLeft: 10
     },
-    name: {
+    name_product: {
         color: 'black',
         fontSize: 20,
         fontWeight: 'bold',
     },
-    title: {
+    title_product: {
         fontSize: 13,
     },
-    price: {
+    price_product: {
         color: 'red',
         fontWeight: 'bold',
         fontSize: 15
+    },
+    price:{
+        
     }
+
 
 
 

@@ -1,18 +1,29 @@
+import axios from "axios";
+import { useState } from "react";
 import { FlatList, Image, ScrollView, StyleSheet, Text, TextInput, Touchable, TouchableOpacity, View } from "react-native";
 
-export default function Home() {
+export default function Home({ navigation }: any) {
+    const [like, setLike] = useState(true);
+
+    const [data, setData] = useState([]);
+
+    const getData = async () => {
+        try {
+            await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product`)
+                .then((reponse) => { setData(reponse.data) })
+                .catch((err) => {
+                    console.log(err);
+                })
+        } catch (err) {
+            console.log(err);
+        }
+
+    }
+
+    getData();
+
     const data_category = [
         { name: 'All' }, { name: 'Hambuger' }, { name: 'Pizaa' }, { name: 'Noodles' }, { name: 'Cake' }, { name: 'Rice' }, { name: 'Dinks' }
-    ]
-    const img_header = [
-        { name: 'San pham', title: 'Hamberger', price: 2000, image: 'https://cdn.outsideonline.com/wp-content/uploads/2022/08/hiking-map-hamburger_h.jpg' },
-        { name: 'San pham', title: 'Hamberger', price: 2300, image: 'https://img.freepik.com/premium-photo/tasty-grilled-homemade-burger_73989-4986.jpg?w=360' },
-        { name: 'San pham', title: 'Hamberger', price: 2500, image: 'https://img.freepik.com/premium-photo/tasty-grilled-homemade-burger-with-beef_73989-4636.jpg' },
-        { name: 'San pham', title: 'Hamberger', price: 2700, image: 'https://img.freepik.com/premium-photo/tasty-grilled-homemade-burger-with-beef_73989-4992.jpg' },
-        { name: 'San pham', title: 'Hamberger', price: 2000, image: 'https://cdn.outsideonline.com/wp-content/uploads/2022/08/hiking-map-hamburger_h.jpg' },
-        { name: 'San pham', title: 'Hamberger', price: 2300, image: 'https://img.freepik.com/premium-photo/tasty-grilled-homemade-burger_73989-4986.jpg?w=360' },
-        { name: 'San pham', title: 'Hamberger', price: 2500, image: 'https://img.freepik.com/premium-photo/tasty-grilled-homemade-burger-with-beef_73989-4636.jpg' },
-        { name: 'San pham', title: 'Hamberger', price: 2700, image: 'https://img.freepik.com/premium-photo/tasty-grilled-homemade-burger-with-beef_73989-4992.jpg' },
     ]
     const renderCategory = ({ item }: any) => {
         return (
@@ -25,34 +36,48 @@ export default function Home() {
     }
     const renderFood = ({ item }: any) => {
         return (
-            <View style={{ flex: 1, alignItems: 'center' }}>
-                <View style={style.container}>
-                    <Image source={{ uri: item.image }} style={style.image_item} />
-                    <View>
-                        <Text style={style.text_name}>{item.name}</Text>
-                        <Text style={style.text_title}>{item.title}</Text>
-                        <View style={{ flexDirection: 'row' }}>
-                            <Text style={[style.text_price, { color: '#f43127' }]}>$</Text>
-                            <Text style={style.text_price}>{item.price}</Text>
+            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product')}>
+                <View style={{ flex: 1, alignItems: 'center' }}>
+                    <View style={style.container}>
+                        <Image source={{ uri: item.anhsp }} style={style.image_item} />
+                        <View>
+                            <Text style={style.text_name}>{item.tensp}</Text>
+                            <Text style={style.text_title}>{item.theloai}</Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text style={[style.text_price, { color: '#f43127' }]}>$</Text>
+                                    <Text style={style.text_price}>{item.giasp}</Text>
+                                </View>
+
+                                {item.yeuthich ?
+                                    <TouchableOpacity onPress={() => { setLike(!like) }}>
+                                        <Image source={require("../Image/onlike.png")} style={style.img_like} />
+                                    </TouchableOpacity>
+                                    :
+                                    <TouchableOpacity onPress={() => { setLike(!like) }}>
+                                        <Image source={require("../Image/offlike.png")} style={style.img_like} />
+                                    </TouchableOpacity>
+                                }
+                            </View>
                         </View>
                     </View>
+
                 </View>
-            </View>
+            </TouchableOpacity>
         )
     }
+
     return (
         <ScrollView>
             <View style={{ flex: 1, padding: 5, backgroundColor: '#f2f2f2' }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginTop: 10, marginBottom: 10 }}>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', margin: 10 }}>
                     <Text style={{ color: 'black', fontSize: 23, fontWeight: 'bold' }}>Hello Minh</Text>
-                    <Image source={require('../Image/cart.png')} style={{ height: 25, width: 25 }} />
+                    <TouchableOpacity onPress={() => navigation.navigate('Cart')}>
+                        <Image source={require('../Image/cart.png')} style={{ height: 25, width: 25 }} />
+                    </TouchableOpacity>
                 </View>
 
-                <View style={{ borderRadius: 25, borderWidth: 1, marginBottom: 10 }}>
-                    <TextInput placeholder="Nhập tên sản phẩm cần tìm" style={{ paddingLeft: 15 }} />
-                </View>
-
-                <Image source={{ uri: img_header[2].image }} style={style.image_header} />
+                <Image source={{ uri: 'https://img.freepik.com/premium-photo/tasty-grilled-homemade-burger-with-beef_73989-4636.jpg' }} style={style.image_header} />
 
                 <FlatList
                     data={data_category}
@@ -61,12 +86,11 @@ export default function Home() {
                     style={{ marginTop: 15, marginBottom: 15 }}
                     showsHorizontalScrollIndicator={false}
                 />
-                {/* <Text style={style.text_category}>Recommend</Text> */}
 
                 <FlatList
                     scrollEnabled={false}
                     numColumns={2}
-                    data={img_header}
+                    data={data}
                     renderItem={renderFood} />
             </View>
         </ScrollView>
@@ -87,17 +111,17 @@ const style = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 20,
         padding: 5,
-        marginRight: 10
+        marginRight: 7
     },
     container: {
-        width: '92%',
+        width: '95%',
         marginBottom: 15,
         borderRadius: 10,
         backgroundColor: '#ffffff'
     },
     image_item: {
         width: '100%',
-        height: 140,
+        height: 150,
         borderRadius: 10,
         resizeMode: 'cover',
     },
@@ -116,5 +140,10 @@ const style = StyleSheet.create({
         marginTop: 10,
         marginLeft: 10,
         marginBottom: 10
+    },
+    img_like: {
+        width: 23,
+        height: 23,
+        marginRight: 15
     }
 })

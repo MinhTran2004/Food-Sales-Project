@@ -1,22 +1,24 @@
-import { Image, StyleSheet, Text, View } from "react-native";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { resolver } from "../../metro.config";
 
 export default function Profile() {
     return (
         <View style={{ flex: 1 }}>
             <View style={styles.header}>
-                <Image source={require('../Image/man.png')} style={styles.avatar} />
             </View>
+
+            <Image source={require('../Image/man.png')} style={styles.avatar} />
 
             <Text style={{ textAlign: 'center', fontSize: 25, color: 'black', fontWeight: 'bold' }}>Trần Công Minh</Text>
             <Text style = {{textAlign: 'center', fontSize: 20}}>( Khách hàng )</Text>
 
             <View style ={{padding: 20}}>
-                <Text style = {styles.text}>Thông tin cá nhân</Text>
-                <Text style = {styles.text}>Lịch sử mua hàng</Text>
-                <Text style = {styles.text}>Giới thiệu</Text>
-                <Text style = {styles.text}>Thay đổi mật khẩu</Text>
-                <Text style = {styles.text}>Đăng xuất</Text>
+                <TouchableOpacity><Text style = {styles.text}>Thông tin cá nhân</Text></TouchableOpacity>
+                <TouchableOpacity><Text style = {styles.text}>Lịch sử mua hàng</Text></TouchableOpacity>
+                <TouchableOpacity><Text style = {styles.text}>Danh sách yêu thích</Text></TouchableOpacity>
+                <TouchableOpacity><Text style = {styles.text}>Giới thiệu</Text></TouchableOpacity>
+                <TouchableOpacity><Text style = {styles.text}>Thay đổi mật khẩu</Text></TouchableOpacity>
+                <TouchableOpacity><Text style = {styles.text}>Đăng xuất</Text></TouchableOpacity>
             </View>
         </View>
     )
@@ -25,19 +27,21 @@ export default function Profile() {
 const styles = StyleSheet.create({
     header: {
         width: '100%',
-        marginTop: 80,
-        alignItems: 'center'
+        height: 120,
+        alignItems: 'center',
+        backgroundColor: '#0974e8',
+        position: 'absolute'
     },
     avatar: {
         height: 120,
         width: 120,
+        alignSelf: 'center',
+        marginTop: 50
     },
-    main: {
 
-    },
     text:{
         color: 'black',
         fontSize: 25,
-        marginBottom: 30
+        marginBottom: 20
     }
 })
