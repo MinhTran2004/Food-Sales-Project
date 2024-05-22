@@ -16,7 +16,7 @@ export default function Cart() {
         return (
             <View style={style.container}>
                 <View style={{ flexDirection: 'row' }}>
-                    <Image source={{ uri: item.image }} style={{ width: 70, height: 70, borderRadius: 15 }} />
+                    <Image source={{ uri: item.image }} style={{ width: 100, height: 100, borderRadius: 10 }} />
 
                     <View style={style.layout_item}>
                         <Text style={style.name_product}>{item.name}</Text>
@@ -90,9 +90,11 @@ const style = StyleSheet.create({
         fontSize: 13,
     },
     price_product: {
+        fontSize: 15,
+            
         color: 'red',
         fontWeight: 'bold',
-        fontSize: 15
+        alignContent: 'flex-end'
     },
     price:{
         

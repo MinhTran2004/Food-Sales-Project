@@ -1,12 +1,11 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, Image, ScrollView, StyleSheet, Text, TextInput, Touchable, TouchableOpacity, View } from "react-native";
 
 export default function Home({ navigation }: any) {
-    const [like, setLike] = useState(true);
-
     const [data, setData] = useState([]);
 
+    //lấy tất cả sản phẩm
     const getData = async () => {
         try {
             await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product`)
@@ -17,21 +16,47 @@ export default function Home({ navigation }: any) {
         } catch (err) {
             console.log(err);
         }
-
     }
 
-    getData();
+    //lấy sản phẩm theo thể loại
+    const selectCategory = async (category: any) => {
+        try {
+            const reponse = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product?theloai=${category}`)
+                .then((reponse) => { setData(reponse.data) })
+                .catch((err) => {
+                    console.log(err);
+                })
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    //Update yêu thích sản phẩm
+    const updateLikeProduct = async (id: any, yeuthich: any) => {
+        try {
+            const reponse = await axios.put(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product/${id}`, { yeuthich: !yeuthich });
+            getData();
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    useEffect(() => {
+        getData();
+    }, [])
 
     const data_category = [
-        { name: 'All' }, { name: 'Hambuger' }, { name: 'Pizaa' }, { name: 'Noodles' }, { name: 'Cake' }, { name: 'Rice' }, { name: 'Dinks' }
+        { name: 'All' }, { name: 'Hambuger' }, { name: 'Pizza' }, { name: 'Noodles' }, { name: 'Cake' }, { name: 'Rice' }, { name: 'Dinks' }
     ]
     const renderCategory = ({ item }: any) => {
+
         return (
-            <View style={style.layout_hozi}>
-                <TouchableOpacity>
+            <TouchableOpacity onPress={() => { selectCategory(item.name); console.log(data); }}>
+                <View style={style.layout_hozi}>
                     <Text style={{ fontWeight: 'bold', color: 'black' }}>{item.name}</Text>
-                </TouchableOpacity>
-            </View>
+                </View>
+            </TouchableOpacity>
+
         )
     }
     const renderFood = ({ item }: any) => {
@@ -50,11 +75,11 @@ export default function Home({ navigation }: any) {
                                 </View>
 
                                 {item.yeuthich ?
-                                    <TouchableOpacity onPress={() => { setLike(!like) }}>
+                                    <TouchableOpacity onPress={() => { updateLikeProduct(item.id, item.yeuthich) }}>
                                         <Image source={require("../Image/onlike.png")} style={style.img_like} />
                                     </TouchableOpacity>
                                     :
-                                    <TouchableOpacity onPress={() => { setLike(!like) }}>
+                                    <TouchableOpacity onPress={() => { updateLikeProduct(item.id, item.yeuthich) }}>
                                         <Image source={require("../Image/offlike.png")} style={style.img_like} />
                                     </TouchableOpacity>
                                 }
@@ -144,6 +169,6 @@ const style = StyleSheet.create({
     img_like: {
         width: 23,
         height: 23,
-        marginRight: 15
+        marginRight: 15,
     }
 })
