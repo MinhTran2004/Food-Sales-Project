@@ -4,6 +4,7 @@ import React from "react";
 import Welcome from "./Welcome";
 import Login from "./Login";
 import Register from "./Register";
+import MainPageNavigation from "../MainPage-Navigation/MainPageNavigation";
 
 const Stack = createNativeStackNavigator();
 
@@ -14,6 +15,7 @@ export default function LoginNavigation(): React.JSX.Element {
         <Stack.Screen name="Welcome" component={Welcome} />
         <Stack.Screen name="Login" component={Login} />
         <Stack.Screen name="Register" component={Register} />
+        <Stack.Screen name="MainPageNavigation" component={MainPageNavigation} />
       </Stack.Navigator>
     </NavigationContainer>
   )

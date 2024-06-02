@@ -8,30 +8,50 @@ import Cart from "./Cart";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Image } from "react-native";
 import Product from "./Product";
-import Oder from "./Oder";
+import Oder from "./OderActive";
+import CheckOder from "./CheckOder";
+import Favourite from "./Favourite";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
+import OderActive from "./OderActive";
+import OderCompleted from "./OderCompleted";
+import OderCancelled from "./OderCancelled";
 
-const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
 
 export default function MainPageNavigation(): React.JSX.Element {
   return (
     <NavigationContainer>
       <Stack.Navigator>
-        <Stack.Screen name="Main" component={MainTabs} options={{ headerShown: false }} />
-        <Stack.Screen name="Product" component={Product} />
-        <Stack.Screen name="Cart" component={Cart} />
+        <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }} />
+        <Stack.Screen name="Product" component={Product} options={{ headerShown: false }} />
+        <Stack.Screen name="Cart" component={Cart} options={{ headerShown: false }} />
+        <Stack.Screen name="CheckOder" component={CheckOder} options={{ headerShown: false }} />
+        <Stack.Screen name="Favourite" component={Favourite} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
+
   );
 }
 
-function MainTabs() {
+const BottomTab = createBottomTabNavigator();
+function BottomTabs() {
   return (
-    <Tab.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
-      <Tab.Screen name="Home" component={Home} options={{ tabBarIcon: () => (<Image source={require("../Image/home.png")} style={{ width: 25, height: 25 }} />) }} />
-      <Tab.Screen name="Sreach" component={Sreach} options={{ tabBarIcon: () => (<Image source={require("../Image/sreach.png")} style={{ width: 25, height: 25 }} />) }} />
-      <Tab.Screen name="Oder" component={Oder} options={{ tabBarIcon: () => (<Image source={require("../Image/oder.png")} style={{ width: 25, height: 25 }} />) }} />
-      <Tab.Screen name="Profile" component={Profile} options={{ tabBarIcon: () => (<Image source={require("../Image/user.png")} style={{ width: 25, height: 25 }} />) }} />
-    </Tab.Navigator>
+    <BottomTab.Navigator initialRouteName="Home" screenOptions={{ headerShown: false, tabBarStyle: { backgroundColor: 'black', opacity: 0.5 } }}>
+      <BottomTab.Screen name="Home" component={Home} options={{ tabBarIcon: () => (<Image source={require("../Image/home.png")} style={{ width: 25, height: 25, tintColor: 'white' }} />) }} />
+      <BottomTab.Screen name="Sreach" component={Sreach} options={{ tabBarIcon: () => (<Image source={require("../Image/sreach.png")} style={{ width: 25, height: 25, tintColor: 'white' }} />) }} />
+      <BottomTab.Screen name="Oder" component={TopTabs} options={{ tabBarIcon: () => (<Image source={require("../Image/oder.png")} style={{ width: 25, height: 25, tintColor: 'white' }} />) }} />
+      <BottomTab.Screen name="Profile" component={Profile} options={{ tabBarIcon: () => (<Image source={require("../Image/user.png")} style={{ width: 25, height: 25, tintColor: 'white' }} />) }} />
+    </BottomTab.Navigator>
+  );
+}
+
+const TopTab = createMaterialTopTabNavigator();
+function TopTabs() {
+  return (
+    <TopTab.Navigator screenOptions={{tabBarStyle: {backgroundColor: '#181a20'}}}>
+      <TopTab.Screen name="Active" component={OderActive} options={{tabBarLabelStyle: {color: '#606161'}}}/>
+      <TopTab.Screen name="Completed" component={OderCompleted} options={{tabBarLabelStyle: {color: '#606161'}}} />
+      <TopTab.Screen name="Cancelled" component={OderCancelled} options={{tabBarLabelStyle: {color: '#606161'}}} />
+    </TopTab.Navigator>
   );
 }
