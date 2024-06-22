@@ -1,18 +1,40 @@
-import { Image, StyleSheet, Text, Touchable, TouchableOpacity, View } from "react-native";
+import axios from "axios";
+import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function Product({ navigation }: any) {
+export default function Product({ navigation, route }: any) {
+    const { product } = route.params;
+
+    const addProduct = async (product: any) => {
+        try {
+            await axios.post("https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart",
+                {
+                    masp: product.id,
+                    tensp: product.tensp,
+                    giasp: product.giasp,
+                    anhsp: product.anhsp,
+                    theloai: product.theloai,
+                    soluong: "1",
+                    tongtien: product.giasp,
+                    trangthai: true
+                }
+            )
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     return (
         <View style={{ flex: 1, backgroundColor: '#1d1d21' }}>
             <View style={{ justifyContent: 'space-between', flex: 1 }}>
                 <View>
-                    <Image source={{ uri: 'https://cdn.outsideonline.com/wp-content/uploads/2022/08/hiking-map-hamburger_h.jpg' }} style={{ width: '100%', height: 300, resizeMode: 'cover' }} />
+                    <Image source={{ uri: product.anhsp }} style={{ width: '100%', height: 300, resizeMode: 'cover' }} />
                     <View style={styles.container}>
-                        <Text style={styles.name}>Hambuger 2 trứng</Text>
-                        <Text style={styles.price}>20.000</Text>
+                        <Text style={styles.name}>{product.tensp}</Text>
+                        <Text style={styles.price}>{product.giasp}</Text>
                         <Text style={styles.introduce}>Chào mừng bạn đến với thế giới của chúng tôi! Hãy thưởng thức hương vị đặc biệt của những chiếc hamburger tại đây. Với bánh mì giòn rụm, thịt bò tươi ngon và phong phú, chúng tôi cam kết mang đến cho bạn trải nghiệm ẩm thực đích thực. Đặt hàng ngay và khám phá hương vị độc đáo của chúng tôi!</Text>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={() => { navigation.navigate("Cart"), addProduct(product) }}>
                     <Text style={styles.sell}>Thêm vào giỏ hàng</Text>
                 </TouchableOpacity>
             </View>

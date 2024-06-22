@@ -15,6 +15,10 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import OderActive from "./OderActive";
 import OderCompleted from "./OderCompleted";
 import OderCancelled from "./OderCancelled";
+import Contact from "./Contact";
+import Register from "../Login-Navigation/Register";
+import Login from "../Login-Navigation/Login";
+import Welcome from "../Login-Navigation/Welcome";
 
 const Stack = createNativeStackNavigator();
 
@@ -27,6 +31,10 @@ export default function MainPageNavigation(): React.JSX.Element {
         <Stack.Screen name="Cart" component={Cart} options={{ headerShown: false }} />
         <Stack.Screen name="CheckOder" component={CheckOder} options={{ headerShown: false }} />
         <Stack.Screen name="Favourite" component={Favourite} options={{ headerShown: false }} />
+        <Stack.Screen name="Contact" component={Contact} options={{ headerShown: false }} />
+        <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
+        <Stack.Screen name="Register" component={Register} options={{ headerShown: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
 

@@ -8,7 +8,7 @@ export default function OderActive({ navigation }: any) {
     //lấy sản phẩm theo thể loại
     const selectCategory = async () => {
         try {
-            await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product`)
+            await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart`)
                 .then((reponse) => { setData(reponse.data) })
                 .catch((err) => {
                     console.log(err);
@@ -18,41 +18,48 @@ export default function OderActive({ navigation }: any) {
         }
     }
 
+    const cancel = async (id:any) => {
+        try {
+            await axios.delete(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart/${id}`)
+            selectCategory();
+        } catch (err) {
+            console.log(err); 
+        }
+    }
+
     useEffect(() => {
         selectCategory();
-    }, [])
+    }, [data])
 
     const vertiRender = ({ item }: any) => {
         return (
             <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product')}>
                 <View style={{ flex: 1, marginBottom: 20, backgroundColor: '#1f222a', borderRadius: 20 }}>
-                    <View style={[style.container, { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#1f222a' }]}>
-
-                        <View style={{ flexDirection: 'row' }}>
+                <View style={{ flexDirection: 'row' }}>
                             <View style={{ padding: 10 }}>
                                 <Image source={{ uri: item.anhsp }} style={[style.image_item, { height: 100, width: 100 }]} />
                             </View>
 
-                            <View style={{ justifyContent: 'space-between', paddingBottom: 5, paddingTop: 5 }}>
+                            <View></View>
+                            <View style={{ justifyContent: 'space-between' }}>
                                 <View>
                                     <Text style={style.text_name}>{item.tensp}</Text>
                                     <Text style={style.text_title}>{item.theloai}</Text>
                                 </View>
 
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                     <Text style={style.text_price}>${item.giasp}</Text>
-                                    <View style={{ backgroundColor: '#1bac4b', padding: 5, borderRadius: 8, marginLeft: 10 }}>
-                                        <Text style={{ color: 'white', fontSize: 13 }}>Paid</Text>
-                                    </View>
+
                                 </View>
                             </View>
+
+                            {/* <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>x {item.soluong}</Text> */}
                         </View>
-                    </View>
 
                     <View style= {{height: 1, backgroundColor: '#5d5d5d', marginTop: 10}}></View>
 
                     <View style = {{flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 15 }} >
-                        <TouchableOpacity style = {{ borderWidth: 1, borderColor: '#1bac4b', width: '45%', padding: 10, borderRadius: 20, marginTop: 15 }}>
+                        <TouchableOpacity style = {{ borderWidth: 1, borderColor: '#1bac4b', width: '45%', padding: 10, borderRadius: 20, marginTop: 15 }} onPress={() => {cancel(item.id)}}>
                             <Text style = {{color: '#1bac4b', textAlign: 'center'}}>Cancel Order</Text>
                         </TouchableOpacity>
                         <TouchableOpacity style = {{ borderWidth: 1, backgroundColor: '#1bac4b', width: '45%', padding: 10, borderRadius: 20, marginTop: 15 }}>

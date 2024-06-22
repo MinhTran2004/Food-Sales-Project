@@ -3,7 +3,7 @@
  */
 
 import {AppRegistry} from 'react-native';
-import App from './Screen/MainPage-Navigation/MainPageNavigation';
+import App from './MainPage-Navigation/MainPageNavigation';
 import {name as appName} from './app.json';
 
 AppRegistry.registerComponent(appName, () => App);

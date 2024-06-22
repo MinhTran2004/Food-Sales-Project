@@ -2,11 +2,32 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { FlatList, Image, ScrollView, StyleSheet, Text, TextInput, Touchable, TouchableOpacity, View } from "react-native";
 
+interface Product {
+    tensp: string;
+    giasp: number;
+    anhsp: string;
+    theloai: string;
+    yeuthich: boolean;
+    id: number;
+  }
+
 export default function Home({ navigation }: any) {
     const [data, setData] = useState([]);
     const [theloai, setTheLoai] = useState([]);
 
-    //lấy tất cả sản phẩm
+    // lay thong tin san pham sang man hinh
+    const getProduct = (item: any): Product =>{
+        return{
+        tensp: item.tensp,
+        giasp: item.giasp,
+        anhsp: item.anhsp,
+        theloai: item.theloai ,
+        yeuthich: item.yeuthich,
+        id: item.id
+        }
+    }
+
+    //lấy tất cả sản phẩm theo yeu thich
     const getData = async () => {
         try {
             await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product?yeuthich=false`)
@@ -35,6 +56,7 @@ export default function Home({ navigation }: any) {
             console.log(err);
         }
     }
+
     //Update yêu thích sản phẩm
     const updateLikeProduct = async (id: any, yeuthich: any) => {
         try {
@@ -70,7 +92,7 @@ export default function Home({ navigation }: any) {
     }
     const horiRender = ({ item }: any) => {
         return (
-            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product')}>
+            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product', {product:getProduct(item)})}>
                 <View style={{ flex: 1, marginRight: 10 }}>
                     <View style={[style.container, { backgroundColor: '#1f222a' }]}>
                         <View style={{ padding: 10 }}>
@@ -101,7 +123,7 @@ export default function Home({ navigation }: any) {
 
     const vertiRender = ({ item }: any) => {
         return (
-            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product')}>
+            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product', {product:getProduct(item)})}>
                 <View style={{ flex: 1, marginBottom: 10 }}>
                     <View style={[style.container, { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#1f222a' }]}>
 
@@ -243,7 +265,6 @@ export default function Home({ navigation }: any) {
                     renderItem={vertiRender} />
             </View>
         </ScrollView>
-
     )
 }
 
