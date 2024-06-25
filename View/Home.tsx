@@ -1,77 +1,55 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FlatList, Image, ScrollView, StyleSheet, Text, TextInput, Touchable, TouchableOpacity, View } from "react-native";
+import { FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { TypeProduct } from "../Model/ProductModel";
+import { ProductController } from "../Controller/ProductController";
+import axiosRetry from "axios-retry";
 
-interface Product {
-    tensp: string;
-    giasp: number;
-    anhsp: string;
-    theloai: string;
-    yeuthich: boolean;
-    id: number;
-  }
+axiosRetry(axios, {
+    retries: 3,
+    retryDelay: (retryCount) => retryCount * 1000,
+    retryCondition: (error) => error.response?.status === 429 || axiosRetry.isNetworkOrIdempotentRequestError(error),
+});
 
 export default function Home({ navigation }: any) {
-    const [data, setData] = useState([]);
-    const [theloai, setTheLoai] = useState([]);
+    const [data, setData] = useState<TypeProduct[]>([]);
+    const [theloai, setTheLoai] = useState<TypeProduct[]>([]);
 
-    // lay thong tin san pham sang man hinh
-    const getProduct = (item: any): Product =>{
-        return{
-        tensp: item.tensp,
-        giasp: item.giasp,
-        anhsp: item.anhsp,
-        theloai: item.theloai ,
-        yeuthich: item.yeuthich,
-        id: item.id
-        }
-    }
-
-    //lấy tất cả sản phẩm theo yeu thich
-    const getData = async () => {
-        try {
-            await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product?yeuthich=false`)
-                .then((reponse) => { setData(reponse.data), setTheLoai(reponse.data) })
-                .catch((err) => {
-                    console.log(err);
-                })
-        } catch (err) {
+    //lấy tất cả sản phẩm
+    const getAllProduct = async() => {
+        try{
+            const reponse = await ProductController.getAllProduct()
+            setData(reponse)
+            setTheLoai(reponse)
+        }catch(err){
             console.log(err);
         }
     }
-    //lấy sản phẩm theo thể loại
-    const selectCategory = async (category: any) => {
-        try {
-            const reponse = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product`, {
-                params: {
-                    yeuthich: false,
-                    theloai: category
-                }
-            })
-                .then((reponse) => { setTheLoai(reponse.data) })
-                .catch((err) => {
-                    console.log(err);
-                })
-        } catch (err) {
+    //lấy tất cả sản phẩm theo thể loại
+    const getCategoryProduct = async (theloai:any) =>{
+        try{
+            const reponse = await ProductController.getCategoryProduct(theloai)
+            setTheLoai(reponse)
+        }catch(err){
             console.log(err);
         }
     }
+    //update yeu thich product
+    const updateLikeProduct = async (id:any, yeuthich:any) => {
+        try{
+            const reponse = await ProductController.updateLikeProduct(id, yeuthich) 
+            getAllProduct()
+        }catch(err){
+            console.log(err);
+        }
+    } 
 
-    //Update yêu thích sản phẩm
-    const updateLikeProduct = async (id: any, yeuthich: any) => {
-        try {
-            const reponse = await axios.put(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product/${id}`, { yeuthich: !yeuthich });
-            getData();
-        } catch (err) {
-            console.log(err);
-        }
-    }
     useEffect(() => {
-        getData();
-    }, [])
+        getAllProduct()
+    },[])
 
     const data_category = [
-        { name: 'All', image: '' },
+        { name: 'All' },
         { name: 'Hambuger' },
         { name: 'Pizza' },
         { name: 'Noodles' },
@@ -83,16 +61,17 @@ export default function Home({ navigation }: any) {
     ]
     const renderCategory = ({ item }: any) => {
         return (
-            <TouchableOpacity onPress={() => { selectCategory(item.name) }}>
+            <TouchableOpacity onPress={() => { item.name === "All" ? getAllProduct() : getCategoryProduct(item.name) }}>
                 <View style={style.layout_hozi}>
                     <Text style={{ fontWeight: 'bold', color: 'white', textAlign: 'center' }}>{item.name}</Text>
                 </View>
             </TouchableOpacity>
         )
     }
+    
     const horiRender = ({ item }: any) => {
         return (
-            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product', {product:getProduct(item)})}>
+            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product', { product: item }) }>
                 <View style={{ flex: 1, marginRight: 10 }}>
                     <View style={[style.container, { backgroundColor: '#1f222a' }]}>
                         <View style={{ padding: 10 }}>
@@ -123,7 +102,7 @@ export default function Home({ navigation }: any) {
 
     const vertiRender = ({ item }: any) => {
         return (
-            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product', {product:getProduct(item)})}>
+            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product', { product: item }) }>
                 <View style={{ flex: 1, marginBottom: 10 }}>
                     <View style={[style.container, { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#1f222a' }]}>
 
@@ -140,7 +119,6 @@ export default function Home({ navigation }: any) {
 
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                     <Text style={style.text_price}>${item.giasp}</Text>
-
                                 </View>
                             </View>
 

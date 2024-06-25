@@ -8,7 +8,6 @@ import Cart from "./Cart";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Image } from "react-native";
 import Product from "./Product";
-import Oder from "./OderActive";
 import CheckOder from "./CheckOder";
 import Favourite from "./Favourite";
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
@@ -16,9 +15,9 @@ import OderActive from "./OderActive";
 import OderCompleted from "./OderCompleted";
 import OderCancelled from "./OderCancelled";
 import Contact from "./Contact";
-import Register from "../Login-Navigation/Register";
-import Login from "../Login-Navigation/Login";
-import Welcome from "../Login-Navigation/Welcome";
+import Register from "./Register";
+import Login from "./Login";
+import Welcome from "./Welcome";
 
 const Stack = createNativeStackNavigator();
 
@@ -33,11 +32,10 @@ export default function MainPageNavigation(): React.JSX.Element {
         <Stack.Screen name="Favourite" component={Favourite} options={{ headerShown: false }} />
         <Stack.Screen name="Contact" component={Contact} options={{ headerShown: false }} />
         <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }}/>
-        <Stack.Screen name="Register" component={Register} options={{ headerShown: false }}/>
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
-
   );
 }
 
@@ -56,10 +54,10 @@ function BottomTabs() {
 const TopTab = createMaterialTopTabNavigator();
 function TopTabs() {
   return (
-    <TopTab.Navigator screenOptions={{tabBarStyle: {backgroundColor: '#181a20'}}}>
-      <TopTab.Screen name="Active" component={OderActive} options={{tabBarLabelStyle: {color: '#606161'}}}/>
-      <TopTab.Screen name="Completed" component={OderCompleted} options={{tabBarLabelStyle: {color: '#606161'}}} />
-      <TopTab.Screen name="Cancelled" component={OderCancelled} options={{tabBarLabelStyle: {color: '#606161'}}} />
+    <TopTab.Navigator screenOptions={{ tabBarStyle: { backgroundColor: '#181a20' } }}>
+      <TopTab.Screen name="Active" component={OderActive} options={{ tabBarLabelStyle: { color: '#606161' } }} />
+      <TopTab.Screen name="Completed" component={OderCompleted} options={{ tabBarLabelStyle: { color: '#606161' } }} />
+      <TopTab.Screen name="Cancelled" component={OderCancelled} options={{ tabBarLabelStyle: { color: '#606161' } }} />
     </TopTab.Navigator>
   );
 }

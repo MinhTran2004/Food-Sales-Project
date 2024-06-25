@@ -1,71 +1,51 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { CartController } from "../Controller/CartController";
+import axiosRetry from "axios-retry";
+import { TypeCart } from "../Model/CartModel";
+import { OderController } from "../Controller/OderController";
+
+axiosRetry(axios, {
+    retries: 3,
+    retryDelay: (retryCount) => retryCount * 1000,
+    retryCondition: (error) => error.response?.status === 429 || axiosRetry.isNetworkOrIdempotentRequestError(error),
+});
 
 export default function CheckOder({ navigation }: any) {
-    const [data, setData] = useState("");
+    const [data, setData] = useState<TypeCart[]>([]);
     const [tongTien, setTongTien] = useState("");
-    const [magh, setMagh] = useState("");
 
-    const getAllProductByCart = async () => {
-        try {
-            await axios.get("https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart")
-                .then(reponse => setData(reponse.data))
-        } catch (err) {
+    const getAllCart = async () => {
+        try{
+            const reponse = await CartController.getAllCart()
+            setData(reponse)
+        }catch(err){
             console.log(err);
         }
     }
 
-    // add new Oder 
-    const addNewOder = async () => {
-        await axios.post("https://65d37253522627d50108eb16.mockapi.io/api/Oder",
-            {
-                masp: magh,
-                tongtien: tongTien,
-                trangthai: "Active",
-            }
-        )
-    }
-
-    // update status Cart 
-    // const updateStatusCart = async (id: any) => {
-    //     try {
-    //         await axios.patch(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart/${id}`,
-    //             {
-    //                 params: {
-    //                     trangthai: false
-    //                 }
-    //             }
-    //         )
-    //     } catch (err) {
-    //         console.log(err);
-    //     }
-    // }
-
-    const getTongTien = () => {
-        let tong = 0;
-        for (let i = 0; i < data.length; i++) {
-            tong = tong + Number(data[i].giasp * data[i].soluong);
+    const updateTongTien = async (data:any) => {
+        try{
+            const reponse = await CartController.updateTongTien(data)
+            setTongTien(reponse)
+        }catch(err){
+            console.log(err);
         }
-        setTongTien(String(tong));
     }
 
-    //lay san pham trong gio hang
-    const getMaSanPham = () => {
-        var ma = "";
-        // ma = data[0].id,
-        for (let i = 1; i < data.length; i++) {
-            ma = ma + "," + data[i].id;
+    const addNewOder = async ( data:any, tongtien:any, trangthai:any ) => {
+        try{
+            await OderController.addNewOder(data, tongtien, trangthai)
+        }catch(err){
+            console.log(err);
         }
-        setMagh(ma);
     }
 
-    // const setStatusProductByCart = () => {
-    //     for (let i = 0; i < data.length; i++) {
-    //         updateStatusCart(data[0].id)
-    //     }
-    // }
-
+    useEffect(() => {
+        getAllCart()
+        updateTongTien(data)
+    }, [data])
 
     const renderProduct = ({ item }: any) => {
         return (
@@ -92,12 +72,6 @@ export default function CheckOder({ navigation }: any) {
             </View>
         )
     }
-
-    useEffect(() => {
-        getAllProductByCart();
-        getTongTien();
-        getMaSanPham();
-    }, [data])
 
     return (
         <ScrollView style={{ backgroundColor: '#1d1d21', }}>
@@ -160,8 +134,8 @@ export default function CheckOder({ navigation }: any) {
                     <View>
                         <TouchableOpacity style={{ backgroundColor: 'green', marginLeft: 10, marginRight: 10, marginBottom: 10, marginTop: 10, borderRadius: 25 }}
                             onPress={() => {
-                                navigation.navigate("Home"),
-                                    addNewOder();
+                                navigation.navigate("Home")
+                                addNewOder(data, tongTien, "oder" )
                             }}>
                             <Text style={{ color: 'red', fontSize: 20, textAlign: 'center', padding: 10, fontWeight: 'bold' }}>Mua hàng - {tongTien}</Text>
                         </TouchableOpacity>
