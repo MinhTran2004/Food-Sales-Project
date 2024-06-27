@@ -1,69 +1,80 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { OderController } from "../Controller/OderController";
+import axiosRetry from "axios-retry";
+import { TypeOder } from "../Model/OderModel";
+
+axiosRetry(axios, {
+    retries: 3,
+    retryDelay: (retryCount) => retryCount * 1000,
+    retryCondition: (error) => error.response?.status === 429 || axiosRetry.isNetworkOrIdempotentRequestError(error),
+});
 
 export default function OderActive({ navigation }: any) {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<TypeOder[]>([]);
+    const [magh, setMagh] = useState("")
+    const [cart, setCart] = useState<any>([])
 
-    //lấy sản phẩm theo thể loại
-    const selectCategory = async () => {
+    const getAllOder = async () => {
         try {
-            await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart`)
-                .then((reponse) => { setData(reponse.data) })
-                .catch((err) => {
-                    console.log(err);
-                })
+            const reponse = await OderController.getAllOder()
+            setData(reponse)
         } catch (err) {
             console.log(err);
         }
     }
+    
+    // const getAllCartById = async () => {
+    //     try {
+    //         const reponse = await OderController.getAllCartById(magh)
+    //         setCart(reponse)
+    //     } catch (err) {
+    //         console.log(err);
+    //     }
+    // }
 
-    const cancel = async (id:any) => {
-        try {
-            await axios.delete(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart/${id}`)
-            selectCategory();
-        } catch (err) {
-            console.log(err); 
-        }
-    }
+    
+    
 
     useEffect(() => {
-        selectCategory();
+        getAllOder()
     }, [data])
+
+    const renderItem = ({ item }: any) => {
+        return (
+            <View style={{ flexDirection: 'row' }}>
+                <View style={{ padding: 10 }}>
+                    <Image source={{ uri: item.anhsp }} style={[style.image_item, { height: 100, width: 100 }]} />
+                </View>
+
+                <View style={{ justifyContent: 'space-between' }}>
+                    <View>
+                        <Text style={style.text_name}>{item.tensp}</Text>
+                        <Text style={style.text_title}>{item.giasp}</Text>
+                    </View>
+                </View>
+            </View>
+        )
+    }
 
     const vertiRender = ({ item }: any) => {
         return (
             <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product')}>
                 <View style={{ flex: 1, marginBottom: 20, backgroundColor: '#1f222a', borderRadius: 20 }}>
-                <View style={{ flexDirection: 'row' }}>
-                            <View style={{ padding: 10 }}>
-                                <Image source={{ uri: item.anhsp }} style={[style.image_item, { height: 100, width: 100 }]} />
-                            </View>
 
-                            <View></View>
-                            <View style={{ justifyContent: 'space-between' }}>
-                                <View>
-                                    <Text style={style.text_name}>{item.tensp}</Text>
-                                    <Text style={style.text_title}>{item.theloai}</Text>
-                                </View>
+                    <FlatList
+                        data={item.cart}
+                        renderItem={renderItem} />
 
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                                    <Text style={style.text_price}>${item.giasp}</Text>
+                    <View style={{ height: 1, backgroundColor: '#5d5d5d', marginTop: 10 }}></View>
 
-                                </View>
-                            </View>
-
-                            {/* <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>x {item.soluong}</Text> */}
-                        </View>
-
-                    <View style= {{height: 1, backgroundColor: '#5d5d5d', marginTop: 10}}></View>
-
-                    <View style = {{flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 15 }} >
-                        <TouchableOpacity style = {{ borderWidth: 1, borderColor: '#1bac4b', width: '45%', padding: 10, borderRadius: 20, marginTop: 15 }} onPress={() => {cancel(item.id)}}>
-                            <Text style = {{color: '#1bac4b', textAlign: 'center'}}>Cancel Order</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 15 }} >
+                        <TouchableOpacity style={{ borderWidth: 1, borderColor: '#1bac4b', width: '45%', padding: 10, borderRadius: 20, marginTop: 15 }}>
+                            <Text style={{ color: '#1bac4b', textAlign: 'center' }}>Cancel Order</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style = {{ borderWidth: 1, backgroundColor: '#1bac4b', width: '45%', padding: 10, borderRadius: 20, marginTop: 15 }}>
-                            <Text style = {{color: 'white', textAlign: 'center'}}>Track Driver</Text>
+                        <TouchableOpacity style={{ borderWidth: 1, backgroundColor: '#1bac4b', width: '45%', padding: 10, borderRadius: 20, marginTop: 15 }}>
+                            <Text style={{ color: 'white', textAlign: 'center' }}>Track Driver</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

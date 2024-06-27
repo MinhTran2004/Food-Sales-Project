@@ -15,7 +15,7 @@ axiosRetry(axios, {
 export default function Cart({ navigation }: any) {
     const [data, setData] = useState<TypeCart[]>([]);
     const [tongTien, setTongTien] = useState("");
-
+    //lay tat ca san pham
     const getAllCart = async ()=>{
         try{
             const reponse = await CartController.getAllCart()
@@ -24,20 +24,23 @@ export default function Cart({ navigation }: any) {
             console.log(err);
         }
     }
+    //xoa san pham theo id
     const deleteCartByid = async (id:any) => {
         try{
-            const reponse = await CartController.deleteCartByid(id)
+            await CartController.deleteCartByid(id)
         }catch(err){
             console.log(err);
         }
     }
+    //udpate so luong
     const updateSoluong = async (id:any, soluong:any, trangthai:any) => {
         try{
-            const reponse = await CartController.updateSoluong(id, soluong, trangthai)
+            await CartController.updateSoluong(id, soluong, trangthai)
         }catch(err){
             console.log(err);
         }
     }
+    //update tong tien
     const updateTongTien = async (data:any) => {
         try{
             const reponse = await CartController.updateTongTien(data)
@@ -46,11 +49,12 @@ export default function Cart({ navigation }: any) {
             console.log(err);
         }
     }
+
     useEffect(() => {
         getAllCart()
         updateTongTien(data)
-        
     }, [data])
+
     const renderItem = ({ item }: any) => {
         return (
             <View style={style.container}>

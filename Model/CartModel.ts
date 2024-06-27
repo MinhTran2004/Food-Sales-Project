@@ -53,7 +53,7 @@ export class CartModel implements TypeCart {
             throw err
         }
     }
-
+    //lat tat ca san pham
     static async getAllCart(): Promise<TypeCart[]> {
         try {
             const reponse = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart?trangthai=true`)
@@ -64,23 +64,42 @@ export class CartModel implements TypeCart {
             throw err
         }
     }
+    //lay san pham theo id
+    static async getCartById(id: String) {
+        var arrId = id.split(",");
+        try {
+            const promises = arrId.map(async (item) => {
+                const response = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart/${item}`);
+                return response.data;
+            });
+            const responses = await Promise.all(promises);
 
+            return responses.map((item) => new CartModel(
+                item.id, item.masp, item.tensp, item.theloai, item.giasp, item.anhsp, item.soluong, item.trangthai
+            ));
+        } catch (err) {
+            throw err;
+        }
+    }
+    //update trang thai san pham
     static async deleteCartByid(id: any) {
         try {
-            const reponse = await axios.delete(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart/${id}`)
+            await axios.patch(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart/${id}`, {
+                trangthai: false
+            })
         } catch (err) {
             throw err
         }
     }
-
+    //update so luong
     static async updateSoluong(id: any, soluong: any, trangthai: Boolean) {
         try {
             if (trangthai) {
-                const reponse = await axios.patch(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart/${id}`, {
+                await axios.patch(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart/${id}`, {
                     soluong: Number(soluong) + 1
                 })
             } else {
-                const reponse = await axios.patch(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart/${id}`, {
+                await axios.patch(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart/${id}`, {
                     soluong: Number(soluong) - 1
                 })
             }
@@ -88,11 +107,12 @@ export class CartModel implements TypeCart {
             throw err
         }
     }
-    static async updateTongTien( data: any) {
-        let sum = data.reduce((total: number, item: any) => {
-            return total + (Number(item.giasp) * Number(item.soluong));
-        }, 0);
-        return String(sum);
+    //update tong tien
+    static async updateTongTien(data: any) {
+        let sum = 0; 
+        data.map((item:any) => {
+            return sum = sum + Number(item.giasp) * Number(item.soluong)
+        })
+        return String(sum) 
     }
-    
 }
