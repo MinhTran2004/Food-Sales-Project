@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { OderController } from "../Controller/OderController";
 import axiosRetry from "axios-retry";
-import { TypeOder } from "../Model/OderModel";
 
 axiosRetry(axios, {
     retries: 3,
@@ -12,30 +11,24 @@ axiosRetry(axios, {
 });
 
 export default function OderActive({ navigation }: any) {
-    const [data, setData] = useState<TypeOder[]>([]);
-    const [magh, setMagh] = useState("")
-    const [cart, setCart] = useState<any>([])
+    const [data, setData] = useState<any>([]);
 
     const getAllOder = async () => {
         try {
-            const reponse = await OderController.getAllOder()
+            const reponse = await OderController.getAllOderActive()
             setData(reponse)
         } catch (err) {
             console.log(err);
         }
     }
-    
-    // const getAllCartById = async () => {
-    //     try {
-    //         const reponse = await OderController.getAllCartById(magh)
-    //         setCart(reponse)
-    //     } catch (err) {
-    //         console.log(err);
-    //     }
-    // }
 
-    
-    
+    const updateStatusOder = async (id: any, status: any) => {
+        try {
+            await OderController.updateStatusOder(id, status)
+        } catch (err) {
+            console.log(err);
+        }
+    }
 
     useEffect(() => {
         getAllOder()
@@ -43,42 +36,58 @@ export default function OderActive({ navigation }: any) {
 
     const renderItem = ({ item }: any) => {
         return (
-            <View style={{ flexDirection: 'row' }}>
-                <View style={{ padding: 10 }}>
-                    <Image source={{ uri: item.anhsp }} style={[style.image_item, { height: 100, width: 100 }]} />
-                </View>
-
-                <View style={{ justifyContent: 'space-between' }}>
+            item.anhsp ?
+                <View style={{ flexDirection: 'row', flex: 1, padding: 10 }}>
                     <View>
-                        <Text style={style.text_name}>{item.tensp}</Text>
-                        <Text style={style.text_title}>{item.giasp}</Text>
+                        <Image source={{ uri: item.anhsp }} style={[style.image_item, { height: 100, width: 100 }]} />
+                    </View>
+
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <View style={{ justifyContent: 'space-between' }}>
+                            <Text style={style.text_name}>{item.tensp}</Text>
+                            <View style = {{flexDirection: 'row'}}>
+                                <Text style={style.text_giasp}>${Number(item.giasp).toLocaleString('vi-VN')}</Text>
+                                <View style={{ backgroundColor: '#1bac4b', padding: 5, borderRadius: 8, marginLeft: 10 }}>
+                                    <Text style={{ color: 'white', fontSize: 13, paddingLeft: 5, paddingRight: 5 }}>Paid</Text>
+                                </View>
+                            </View>
+                        </View>
+                        <View style={{ justifyContent: "center" }}>
+                            <Text style={{ color: 'white', fontSize: 18 }}>X{item.soluong}</Text>
+                        </View>
                     </View>
                 </View>
-            </View>
+                :
+                <View></View>
         )
     }
 
     const vertiRender = ({ item }: any) => {
         return (
-            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product')}>
-                <View style={{ flex: 1, marginBottom: 20, backgroundColor: '#1f222a', borderRadius: 20 }}>
+            item.cart.anhsp ?
+                <View></View>
+                :
+                <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product')}>
+                    <View style={{ flex: 1, marginBottom: 20, backgroundColor: '#1f222a', borderRadius: 20 }}>
 
-                    <FlatList
-                        data={item.cart}
-                        renderItem={renderItem} />
+                        <FlatList
+                            data={item.cart}
+                            renderItem={renderItem} />
 
-                    <View style={{ height: 1, backgroundColor: '#5d5d5d', marginTop: 10 }}></View>
+                        <View style={{ height: 1, backgroundColor: '#5d5d5d' }}></View>
 
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 15 }} >
-                        <TouchableOpacity style={{ borderWidth: 1, borderColor: '#1bac4b', width: '45%', padding: 10, borderRadius: 20, marginTop: 15 }}>
-                            <Text style={{ color: '#1bac4b', textAlign: 'center' }}>Cancel Order</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={{ borderWidth: 1, backgroundColor: '#1bac4b', width: '45%', padding: 10, borderRadius: 20, marginTop: 15 }}>
-                            <Text style={{ color: 'white', textAlign: 'center' }}>Track Driver</Text>
-                        </TouchableOpacity>
+                        <Text style={{ color: 'white', textAlign: 'right', fontSize: 18, paddingRight: 15, marginTop: 10 }}>Tổng tiền: {item.tongtien}</Text>
+
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 15 }}>
+                            <TouchableOpacity style={style.btn_checkOder} onPress={() => { updateStatusOder(item.id, "Cancel") }}>
+                                <Text style={{ color: 'white', textAlign: 'center' }}>Cancel Order</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={style.btn_checkOder} onPress={() => { updateStatusOder(item.id, "Completed") }}>
+                                <Text style={{ color: 'white', textAlign: 'center' }}>Track Driver</Text>
+                            </TouchableOpacity>
+                        </View>
                     </View>
-                </View>
-            </TouchableOpacity>
+                </TouchableOpacity>
         )
     }
     return (
@@ -87,7 +96,6 @@ export default function OderActive({ navigation }: any) {
                 data={data}
                 renderItem={vertiRender}
                 style={{ marginTop: 20 }} />
-
         </View>
     )
 }
@@ -101,17 +109,18 @@ const style = StyleSheet.create({
         width: 160,
         height: 150,
         borderRadius: 25,
-        resizeMode: 'cover',
+        resizeMode: 'stretch',
     },
     text_name: {
         color: 'white',
         fontSize: 22,
         marginLeft: 10
     },
-    text_title: {
-        color: 'white',
-        marginLeft: 10,
-        fontSize: 14,
+    text_giasp: {
+        color: '#1b9f47',
+        marginLeft: 15,
+        fontSize: 19,
+        fontWeight: 'bold'
     },
     text_price: {
         fontSize: 20,
@@ -121,4 +130,12 @@ const style = StyleSheet.create({
         color: '#1bac4b',
         fontWeight: 'bold'
     },
+    btn_checkOder: {
+        borderWidth: 1,
+        backgroundColor: '#1bac4b',
+        width: '45%',
+        padding: 10,
+        borderRadius: 20,
+        marginTop: 15
+    }
 })

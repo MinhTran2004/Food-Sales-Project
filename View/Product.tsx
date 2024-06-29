@@ -14,8 +14,7 @@ export default function Product({ navigation, route }: any) {
 
     const addNewCart = async (data:any) => {
         try{
-            const reponse = await CartController.addNewCart(data)
-            console.log(reponse);
+            await CartController.addNewCart(data)
         }catch(err){
             console.log(err);
         }

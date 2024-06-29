@@ -40,7 +40,7 @@ export class CartModel implements TypeCart {
 
     static async addNewCart(data: any) {
         try {
-            const reponse = await axios.post(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart`, {
+            await axios.post(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart`, {
                 masp: data.masp,
                 tensp: data.tensp,
                 theloai: data.theloai,
@@ -54,12 +54,16 @@ export class CartModel implements TypeCart {
         }
     }
     //lat tat ca san pham
-    static async getAllCart(): Promise<TypeCart[]> {
+    static async getAllCart() {
         try {
             const reponse = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart?trangthai=true`)
-            return reponse.data.map((item: any) => new CartModel(
-                item.id, item.masp, item.tensp, item.theloai, item.giasp, item.anhsp, item.soluong, item.trangthai
-            ))
+            if (reponse.data != null) {
+                return reponse.data.map((item: any) => new CartModel(
+                    item.id, item.masp, item.tensp, item.theloai, item.giasp, item.anhsp, item.soluong, item.trangthai
+                ))
+            } else {
+                return []
+            }
         } catch (err) {
             throw err
         }
@@ -81,12 +85,23 @@ export class CartModel implements TypeCart {
             throw err;
         }
     }
-    //update trang thai san pham
+    //delete trang thai san pham
     static async deleteCartByid(id: any) {
         try {
-            await axios.patch(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart/${id}`, {
-                trangthai: false
-            })
+            await axios.delete(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart/${id}`)
+        } catch (err) {
+            console.log(err);
+        }
+    }
+    //update trang thai san pham
+    static async updateStatusCartByid(id: any) {
+        var arrId = id.split(",");
+        try {
+            arrId.map(async (item: any) => {
+                await axios.patch(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart/${item}`, {
+                    trangthai: false
+                });
+            });
         } catch (err) {
             throw err
         }
@@ -109,10 +124,14 @@ export class CartModel implements TypeCart {
     }
     //update tong tien
     static async updateTongTien(data: any) {
-        let sum = 0; 
-        data.map((item:any) => {
-            return sum = sum + Number(item.giasp) * Number(item.soluong)
-        })
-        return String(sum) 
+        try {
+            let sum = 0;
+            data.map((item: any) => {
+                return sum = sum + Number(item.giasp) * Number(item.soluong)
+            })
+            return String(sum)
+        } catch (err) {
+            console.log(err);
+        }
     }
 }

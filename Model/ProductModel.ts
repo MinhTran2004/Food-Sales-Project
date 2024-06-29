@@ -45,26 +45,34 @@ export class ProductModel implements TypeProduct {
             throw err
         }
     }
-
-    //update giá trị thuộc tính yêu thích
-    static async updateLikeProduct(id: any, yeuthich: any) {
+    //lay san pham cho sreach
+    static async getSreachAllProduct(key: any) {
         try {
-            const reponse = await axios.put(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product/${id}`, { yeuthich: !yeuthich });
+            const response = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product`);
+            
+            if (key) {
+                const data = response.data.filter((item: any) => {
+                    return item.tensp.toLowerCase().includes(key.toLowerCase());
+                });
+                return data;
+            } else {
+                return response.data;
+            }
         } catch (err) {
-            console.log("ProductModel: ", err);
+            console.error("Error fetching products:", err);
+            throw err; 
         }
     }
-
     //lấy sản phẩm theo thể loại
-    static async getCategoryProduct(theloai: any): Promise<TypeProduct[]>{
+    static async getCategoryProduct(theloai: any): Promise<TypeProduct[]> {
         try {
-             const reponse = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product`, {
+            const reponse = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product`, {
                 params: {
                     yeuthich: false,
                     theloai: theloai
                 }
             })
-            return reponse.data.map((item:any) => new ProductModel(
+            return reponse.data.map((item: any) => new ProductModel(
                 item.id, item.tensp, item.giasp, item.anhsp, item.theloai, item.yeuthich
             ))
         } catch (err) {
@@ -72,5 +80,16 @@ export class ProductModel implements TypeProduct {
             throw err
         }
     }
+
+    //update giá trị thuộc tính yêu thích
+    static async updateLikeProduct(id: any, yeuthich: any) {
+        try {
+            await axios.put(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product/${id}`, { yeuthich: !yeuthich });
+        } catch (err) {
+            console.log("ProductModel: ", err);
+        }
+    }
+
+
 
 }

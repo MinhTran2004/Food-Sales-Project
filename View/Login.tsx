@@ -1,29 +1,71 @@
 import { useState } from "react";
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { userController } from "../Controller/UserController";
 
 export default function Login({ navigation }: any) {
+    const [taikhoan, setTaiKhoan] = useState("")
+    const [matkhau, setMatKhau] = useState("")
+    const [errorTaikhoan, setErrorTaiKhoan] = useState("")
+    const [errorMatkhau, setErrorMatKhau] = useState("")
     const [hidePassword, setHidePassword] = useState(true);
 
+    const checkNullData = () => {
+        let check = true
+        if (taikhoan) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isEmail = re.test(String(taikhoan).toLocaleLowerCase())
+            if (isEmail) {
+                setErrorTaiKhoan("")
+            } else {
+                setErrorTaiKhoan("Không đúng định dạng Email")
+                check = false
+            }
+        } else {
+            setErrorTaiKhoan("Không để trống ô nhập")
+            check = false
+        }
+        if (matkhau) {
+            setErrorMatKhau("")
+        } else {
+            setErrorMatKhau("Không để trống ô nhập")
+            check = false
+        }
+        return check
+    }
+
+    const checkLogin = async () => {
+        if(checkNullData()){
+            try {
+                const check = await userController.checkUserLogin(taikhoan, matkhau);
+                if (check) {
+                    navigation.navigate("Main")
+                }else{
+                    setErrorMatKhau("Sai mật khẩu")
+                }
+            } catch (err) {
+                console.log(err);
+            }
+        }
+    }
     return (
         <View style={{ flex: 1, backgroundColor: '#181a20', padding: 10 }}>
             <Image source={require("../Image/logo.png")} style={style.logo} />
 
-            <Text style={{ color: 'white', fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 }}>Create New Account</Text>
+            <Text style={{ color: 'white', fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 70 }}>Create New Account</Text>
             {/* username */}
             <View style={style.layout}>
                 <Image source={require("../Image/mail.png")} style={style.icon_input} />
-                <TextInput style={style.input} placeholder="Email" placeholderTextColor={'white'} />
+                <TextInput style={style.input} placeholder="Email" placeholderTextColor={'white'} onChangeText={text => setTaiKhoan(text)} />
             </View>
-            <Text style={style.error}> hello</Text>
+            <Text style={style.error}>{errorTaikhoan}</Text>
 
             {/* Password */}
             <View style={[style.layout, { alignItems: 'center', justifyContent: 'space-between' }]}>
-
                 {hidePassword ?
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row' }}>
                             <Image source={require('../Image/lock.png')} style={style.icon_input} />
-                            <TextInput style={style.input} placeholder="Password" placeholderTextColor={"white"} />
+                            <TextInput style={style.input} placeholder="Password" placeholderTextColor={"white"} onChangeText={text => setMatKhau(text)} />
                         </View>
                         <TouchableOpacity onPress={() => { setHidePassword(!hidePassword) }}>
                             <Image source={require('../Image/show.png')} style={{ width: 27, height: 27, tintColor: 'white' }} />
@@ -33,7 +75,7 @@ export default function Login({ navigation }: any) {
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row' }}>
                             <Image source={require('../Image/lock.png')} style={style.icon_input} />
-                            <TextInput style={style.input} placeholder="Password" placeholderTextColor={"white"} />
+                            <TextInput style={style.input} placeholder="Password" placeholderTextColor={"white"} secureTextEntry={true} onChangeText={text => setMatKhau(text)} />
                         </View>
                         <TouchableOpacity onPress={() => { setHidePassword(!hidePassword) }}>
                             <Image source={require('../Image/hide.png')} style={{ width: 28, height: 28, tintColor: 'white' }} />
@@ -41,15 +83,14 @@ export default function Login({ navigation }: any) {
                     </View>
                 }
             </View>
-
-            <Text style={style.error}> hello</Text>
+            <Text style={style.error}>{errorMatkhau}</Text>
 
             {/* button login */}
-            <TouchableOpacity style={style.button} onPress={() => { navigation.navigate('MainPageNavigation') }}>
+            <TouchableOpacity style={style.button} onPress={() => { checkLogin() }}>
                 <Text style={style.login}>Login</Text>
             </TouchableOpacity>
 
-            <View style={{ flexDirection: 'row', marginTop: 40 }}>
+            <View style={{ flexDirection: 'row', marginTop: 50 }}>
                 <View style={style.line}></View>
                 <Text style={style.or}>OR</Text>
                 <View style={style.line}></View>
@@ -101,6 +142,7 @@ const style = StyleSheet.create({
     input: {
         width: '75%',
         marginLeft: 10,
+        paddingLeft: 10,
         borderLeftWidth: 0.5,
         color: 'white'
     },

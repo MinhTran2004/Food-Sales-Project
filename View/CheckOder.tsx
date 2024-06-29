@@ -13,8 +13,8 @@ axiosRetry(axios, {
 });
 
 export default function CheckOder({ navigation }: any) {
-    const [data, setData] = useState<TypeCart[]>([]);
-    const [tongTien, setTongTien] = useState("");
+    const [data, setData] = useState<any>([]);
+    const [tongTien, setTongTien] = useState<any>("");
 
     const getAllCart = async () => {
         try{
@@ -135,7 +135,7 @@ export default function CheckOder({ navigation }: any) {
                         <TouchableOpacity style={{ backgroundColor: 'green', marginLeft: 10, marginRight: 10, marginBottom: 10, marginTop: 10, borderRadius: 25 }}
                             onPress={() => {
                                 navigation.navigate("Home")
-                                addNewOder(data, tongTien, "oder" )
+                                addNewOder(data, tongTien, "Active" )
                             }}>
                             <Text style={{ color: 'red', fontSize: 20, textAlign: 'center', padding: 10, fontWeight: 'bold' }}>Mua hàng - {tongTien}</Text>
                         </TouchableOpacity>

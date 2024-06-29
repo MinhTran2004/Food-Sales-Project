@@ -1,27 +1,33 @@
 import axios from "axios";
+import axiosRetry from "axios-retry";
 import { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { OderController } from "../Controller/OderController";
 
-export default function OderCancelled({navigation}:any) {
-    const [data, setData] = useState([]);
+axiosRetry(axios, {
+    retries: 3,
+    retryDelay: (retryCount) => retryCount * 1000,
+    retryCondition: (error) => error.response?.status === 429 || axiosRetry.isNetworkOrIdempotentRequestError(error),
+});
 
-    //lấy sản phẩm theo thể loại
-    const selectCategory = async () => {
+export default function OderCancelled({ navigation }: any) {
+    const [data, setData] = useState<any>([]);
+
+    //lấy tất cả danh sách có trạng thái = "Cancel"
+    const getAllOderCancel = async () => {
         try {
-            await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product`)
-                .then((reponse) => { setData(reponse.data) })
-                .catch((err) => {
-                    console.log(err);
-                })
+            const reponse = await OderController.getAllOderCancel()
+            setData(reponse)
         } catch (err) {
             console.log(err);
         }
     }
 
     useEffect(() => {
-        selectCategory();
-    }, [])
-    const vertiRender = ({ item }: any) => {
+        getAllOderCancel();
+    }, [data])
+
+    const renderItem = ({ item }: any) => {
         return (
             <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product')}>
                 <View style={{ flex: 1, marginBottom: 20 }}>
@@ -39,19 +45,29 @@ export default function OderCancelled({navigation}:any) {
                                 </View>
 
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Text style={style.text_price}>${item.giasp}</Text>
-                                    <View style = {{ padding: 5, borderRadius: 8, marginLeft: 10, borderWidth: 1, borderColor: '#f05454'}}>
-                                        <Text style={{color: '#f05454', fontSize: 13}}>Cancalled</Text>
+                                    <Text style={style.text_giasp}>${Number(item.giasp).toLocaleString('vi-VN')}</Text>
+                                    <View style={{ padding: 5, borderRadius: 8, marginLeft: 10, borderWidth: 1, borderColor: '#f05454' }}>
+                                        <Text style={{ color: '#f05454', fontSize: 13 }}>Cancalled</Text>
                                     </View>
                                 </View>
                             </View>
-
                         </View>
                     </View>
                 </View>
             </TouchableOpacity>
         )
     }
+
+    const vertiRender = ({ item }: any) => {
+        return (
+            <View>
+                <FlatList
+                    data={item.cart}
+                    renderItem={renderItem} />
+            </View>
+        )
+    }
+
     return (
         <View style={{ flex: 1, backgroundColor: '#181a20', padding: 10 }}>
             <FlatList
@@ -72,7 +88,7 @@ const style = StyleSheet.create({
         width: 160,
         height: 150,
         borderRadius: 25,
-        resizeMode: 'cover',
+        resizeMode: 'stretch',
     },
     text_name: {
         color: 'white',
@@ -84,12 +100,10 @@ const style = StyleSheet.create({
         marginLeft: 10,
         fontSize: 14,
     },
-    text_price: {
-        fontSize: 20,
-        marginTop: 10,
-        marginLeft: 10,
-        marginBottom: 10,
-        color: '#1bac4b',
+    text_giasp: {
+        color: '#1b9f47',
+        marginLeft: 15,
+        fontSize: 19,
         fontWeight: 'bold'
     },
 })

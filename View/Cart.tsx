@@ -13,8 +13,8 @@ axiosRetry(axios, {
 });
 
 export default function Cart({ navigation }: any) {
-    const [data, setData] = useState<TypeCart[]>([]);
-    const [tongTien, setTongTien] = useState("");
+    const [data, setData] = useState<any>([]);
+    const [tongTien, setTongTien] = useState<any>("");
     //lay tat ca san pham
     const getAllCart = async ()=>{
         try{
@@ -27,7 +27,9 @@ export default function Cart({ navigation }: any) {
     //xoa san pham theo id
     const deleteCartByid = async (id:any) => {
         try{
-            await CartController.deleteCartByid(id)
+            const reponse = await CartController.deleteCartByid(id)
+            // setData(reponse)
+            // console.log(reponse);
         }catch(err){
             console.log(err);
         }

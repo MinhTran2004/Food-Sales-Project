@@ -1,6 +1,83 @@
+import { useState } from "react";
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { TypeUser, UserModel } from "../Model/UserModel";
+import { userController } from "../Controller/UserController";
 
 export default function Register({ navigation }: any) {
+    const [ten, setTen] = useState("")
+    const [taikhoan, setTaiKhoan] = useState("")
+    const [matkhau, setMatKhau] = useState("")
+    const [sdt, setSdt] = useState("")
+    const [errorTen, setErrorTen] = useState("")
+    const [errorTaikhoan, setErrorTaiKhoan] = useState("")
+    const [errorMatkhau, setErrorMatKhau] = useState("")
+    const [errorSdt, setErrorSdt] = useState("")
+
+    const checkNullData = () => {
+        let check = true
+        if (ten) {
+            setErrorTen("")
+        } else {
+            setErrorTen("Không để trống ô nhập")
+            check = false
+        }
+
+        if (taikhoan) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const isEmail = re.test(String(taikhoan).toLocaleLowerCase())
+            if (isEmail) {
+                setErrorTaiKhoan("")
+            } else {
+                setErrorTaiKhoan("Không đúng định dạng Email")
+                check = false
+            }
+        } else {
+            setErrorTaiKhoan("Không để trống ô nhập")
+            check = false
+        }
+
+        if (matkhau) {
+            setErrorMatKhau("")
+        } else {
+            setErrorMatKhau("Không để trống ô nhập")
+            check = false
+        }
+
+        if (sdt) {
+            const re = /^[0-9]{10}$/;
+            const isSdt = re.test(String(sdt));
+            if (isSdt) {
+                setErrorSdt("")
+            } else {
+                setErrorSdt("Nhập sai định dạng SDT")
+                check = false
+            }
+        } else {
+            setErrorSdt("Không để trống ô nhập")
+            check = false
+        }
+
+        return check
+    }
+
+    const addNewUser = async () => {
+        if (checkNullData()) {
+            const data = new UserModel(undefined, ten, taikhoan, matkhau, sdt, undefined, undefined)
+            try {
+                const check = await userController.getUserByAccount(taikhoan);
+                if (check) {
+                    setErrorTaiKhoan("Tài khoản đã tồn tại")
+                }else{
+                    await userController.addNewUser(data, taikhoan)
+                }
+
+            } catch (err) {
+                console.log(err);
+            }
+        } else {
+            console.log("123");
+        }
+    }
     return (
         <View style={{ flex: 1, backgroundColor: '#181a20', padding: 10 }}>
             <Image source={require("../Image/logo.png")} style={style.logo} />
@@ -9,23 +86,29 @@ export default function Register({ navigation }: any) {
 
             <View style={style.layout}>
                 <Image source={require("../Image/account.png")} style={style.icon_input} />
-                <TextInput style={style.input} placeholder="Username" placeholderTextColor={'white'} />
+                <TextInput style={style.input} placeholder="Tên Người dùng" placeholderTextColor={'white'} onChangeText={text => setTen(text)} />
             </View>
-            <Text style={style.error}>Không để trống ô nhập</Text>
+            <Text style={style.error}>{errorTen}</Text>
 
             <View style={style.layout}>
                 <Image source={require("../Image/mail.png")} style={style.icon_input} />
-                <TextInput style={style.input} placeholder="Email" placeholderTextColor={'white'} />
+                <TextInput style={style.input} placeholder="Email" placeholderTextColor={'white'} onChangeText={text => setTaiKhoan(text)} />
             </View>
-            <Text style={style.error}>Không để trống ô nhập</Text>
+            <Text style={style.error}>{errorTaikhoan}</Text>
 
             <View style={style.layout}>
                 <Image source={require("../Image/lock.png")} style={style.icon_input} />
-                <TextInput style={style.input} placeholder="Password" placeholderTextColor={'white'} />
+                <TextInput style={style.input} placeholder="Mật khẩu" placeholderTextColor={'white'} onChangeText={text => setMatKhau(text)} />
             </View>
-            <Text style={style.error}>Không để trống ô nhập</Text>
+            <Text style={style.error}>{errorMatkhau}</Text>
 
-            <TouchableOpacity style={style.button} onPress={() => { navigation.navigate('Login') }}>
+            <View style={style.layout}>
+                <Image source={require("../Image/phone.png")} style={style.icon_input} />
+                <TextInput style={style.input} placeholder="Số điện thoại" placeholderTextColor={'white'} onChangeText={text => setSdt(text)} />
+            </View>
+            <Text style={style.error}>{errorSdt}</Text>
+
+            <TouchableOpacity style={style.button} onPress={() => { addNewUser() }}>
                 <Text style={style.register}>Register</Text>
             </TouchableOpacity>
 
@@ -81,6 +164,7 @@ const style = StyleSheet.create({
         marginLeft: 10,
         paddingLeft: 10,
         borderLeftWidth: 0.5,
+        color: 'white'
     },
     error: {
         color: 'red',

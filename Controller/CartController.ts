@@ -10,11 +10,11 @@ axiosRetry(axios, {
 
 export class CartController {
     // lấy tất cả sản phẩm trong cart
-    static async getAllCart(): Promise<TypeCart[]> {
+    static async getAllCart() {
         try {
             return await CartModel.getAllCart()
         } catch (err) {
-            throw err
+            return []
         }
     }
     // lấy tất cả sản phẩm trong cart theo id
@@ -28,7 +28,7 @@ export class CartController {
     // thêm sản phẩm
     static async addNewCart(data: any) {
         try {
-            const reponse = await CartModel.addNewCart(data)
+            await CartModel.addNewCart(data)
             return await CartController.getAllCart()
         } catch (err) {
             throw err
@@ -37,8 +37,16 @@ export class CartController {
     // xóa sản phẩm theo id
     static async deleteCartByid(id: any) {
         try {
-            const reponse = await CartModel.deleteCartByid(id)
-            return await CartController.getAllCart()
+            await CartModel.deleteCartByid(id)
+            await CartController.getAllCart()
+        } catch (err) {
+            throw err
+        }
+    }
+    // xóa sản phẩm theo id
+    static async updateStatusCartByid(id: any) {
+        try {
+            await CartModel.updateStatusCartByid(id)
         } catch (err) {
             throw err
         }
@@ -59,7 +67,11 @@ export class CartController {
     }
 
     static async updateTongTien(data: any) {
-        return await CartModel.updateTongTien(data)
+        try{
+            return await CartModel.updateTongTien(data)
+        }catch(err){
+            console.log(err);
+        }
     }
 
 }

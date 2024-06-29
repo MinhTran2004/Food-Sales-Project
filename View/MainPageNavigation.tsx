@@ -3,7 +3,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import Home from "./Home";
 import Sreach from "./Sreach";
-import Profile from "./Profile";
+import MainProfile from "./MainProfile";
 import Cart from "./Cart";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Image } from "react-native";
@@ -18,13 +18,14 @@ import Contact from "./Contact";
 import Register from "./Register";
 import Login from "./Login";
 import Welcome from "./Welcome";
+import Profile from "./Profile";
 
 const Stack = createNativeStackNavigator();
 
 export default function MainPageNavigation(): React.JSX.Element {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
+      <Stack.Navigator initialRouteName="Main">
         <Stack.Screen name="Main" component={BottomTabs} options={{ headerShown: false }} />
         <Stack.Screen name="Product" component={Product} options={{ headerShown: false }} />
         <Stack.Screen name="Cart" component={Cart} options={{ headerShown: false }} />
@@ -34,6 +35,7 @@ export default function MainPageNavigation(): React.JSX.Element {
         <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="Register" component={Register} options={{ headerShown: false }} />
+        <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -46,7 +48,7 @@ function BottomTabs() {
       <BottomTab.Screen name="Home" component={Home} options={{ tabBarIcon: () => (<Image source={require("../Image/home.png")} style={{ width: 25, height: 25, tintColor: 'white' }} />) }} />
       <BottomTab.Screen name="Sreach" component={Sreach} options={{ tabBarIcon: () => (<Image source={require("../Image/sreach.png")} style={{ width: 25, height: 25, tintColor: 'white' }} />) }} />
       <BottomTab.Screen name="Oder" component={TopTabs} options={{ tabBarIcon: () => (<Image source={require("../Image/oder.png")} style={{ width: 25, height: 25, tintColor: 'white' }} />) }} />
-      <BottomTab.Screen name="Profile" component={Profile} options={{ tabBarIcon: () => (<Image source={require("../Image/user.png")} style={{ width: 25, height: 25, tintColor: 'white' }} />) }} />
+      <BottomTab.Screen name="MainProfile" component={MainProfile} options={{ tabBarIcon: () => (<Image source={require("../Image/user.png")} style={{ width: 25, height: 25, tintColor: 'white' }} />) }} />
     </BottomTab.Navigator>
   );
 }

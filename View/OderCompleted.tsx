@@ -1,65 +1,80 @@
 import axios from "axios";
+import axiosRetry from "axios-retry";
 import { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { OderController } from "../Controller/OderController";
+
+axiosRetry(axios, {
+    retries: 3,
+    retryDelay: (retryCount) => retryCount * 1000,
+    retryCondition: (error) => error.response?.status === 429 || axiosRetry.isNetworkOrIdempotentRequestError(error),
+});
 
 export default function OderCompleted({ navigation }: any) {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<any>([]);
 
-    //lấy sản phẩm theo thể loại
-    const selectCategory = async () => {
+    //lấy tất cả danh sách có trạng thái = "Completed"
+    const getAllOderCompleted = async () => {
         try {
-            await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product`)
-                .then((reponse) => { setData(reponse.data) })
-                .catch((err) => {
-                    console.log(err);
-                })
+            const reponse = await OderController.getAllOderCompleted()
+            setData(reponse)
         } catch (err) {
             console.log(err);
         }
     }
 
     useEffect(() => {
-        selectCategory();
-    }, [])
-    const vertiRender = ({ item }: any) => {
+        getAllOderCompleted();
+    }, [data])
+
+    const renderItem = ({ item }: any) => {
         return (
-            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product')}>
-                <View style={{ flex: 1, marginBottom: 20 }}>
-                    <View style={[style.container, { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#1f222a' }]}>
-
-                        <View style={{ flexDirection: 'row' }}>
-                            <View style={{ padding: 10 }}>
-                                <Image source={{ uri: item.anhsp }} style={[style.image_item, { height: 100, width: 100 }]} />
-                            </View>
-
-                            <View style={{ justifyContent: 'space-between', paddingBottom: 5, paddingTop: 5 }}>
-                                <View>
-                                    <Text style={style.text_name}>{item.tensp}</Text>
-                                    <Text style={style.text_title}>{item.theloai}</Text>
-                                </View>
-
-                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                    <Text style={style.text_price}>${item.giasp}</Text>
-                                    <View style = {{backgroundColor: '#1bac4b', padding: 5, borderRadius: 8, marginLeft: 10}}>
-                                        <Text style={{color: 'white', fontSize: 13}}>Completed</Text>
-                                    </View>
+            item.anhsp ? (
+                <View style={{ flexDirection: 'row', flex: 1, padding: 10 }}>
+                    <View>
+                        <Image source={{ uri: item.anhsp }} style={[style.image_item, { height: 100, width: 100 }]} />
+                    </View>
+    
+                    <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
+                        <View style={{ justifyContent: 'space-between' }}>
+                            <Text style={style.text_name}>{item.tensp}</Text>
+                            <View style={{ flexDirection: 'row', justifyContent: 'center' }}>
+                                <Text style={style.text_giasp}>{Number(item.giasp).toLocaleString('vi-VN')}</Text>
+                                <View style={{ backgroundColor: '#1bac4b', padding: 5, borderRadius: 8, marginLeft: 10 }}>
+                                    <Text style={{ color: 'white', fontSize: 13 }}>Completed</Text>
                                 </View>
                             </View>
-
+                        </View>
+                        <View style={{ justifyContent: "center" }}>
+                            <Text style={{ color: 'white', fontSize: 18 }}>X{item.soluong}</Text>
                         </View>
                     </View>
-                    <View style= {{height: 1, backgroundColor: '#5d5d5d', marginTop: 10}}></View>
-
-                    <View style = {{flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 15 }} >
-                        <TouchableOpacity style = {{ borderWidth: 1, borderColor: '#1bac4b', width: '45%', padding: 10, borderRadius: 20, marginTop: 15 }}>
-                            <Text style = {{color: '#1bac4b', textAlign: 'center'}}>Leave a Review</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style = {{ borderWidth: 1, backgroundColor: '#1bac4b', width: '45%', padding: 10, borderRadius: 20, marginTop: 15 }}>
-                            <Text style = {{color: 'white', textAlign: 'center'}}>Oder Again</Text>
-                        </TouchableOpacity>
-                    </View>
                 </View>
-            </TouchableOpacity>
+            ) : (
+                <View></View>
+            )
+        );
+    }
+    
+
+    const vertiRender = ({ item }: any) => {
+        return (
+            <View style={{ flex: 1, marginBottom: 20 }}>
+                <FlatList
+                    data={item.cart}
+                    renderItem={renderItem} />
+
+                <View style={{ height: 1, backgroundColor: '#5d5d5d', marginTop: 10 }}></View>
+
+                <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 15 }} >
+                    <TouchableOpacity style={{ borderWidth: 1, borderColor: '#1bac4b', width: '45%', padding: 10, borderRadius: 20, marginTop: 15 }}>
+                        <Text style={{ color: '#1bac4b', textAlign: 'center' }}>Leave a Review</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={{ borderWidth: 1, backgroundColor: '#1bac4b', width: '45%', padding: 10, borderRadius: 20, marginTop: 15 }}>
+                        <Text style={{ color: 'white', textAlign: 'center' }}>Oder Again</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
         )
     }
     return (
@@ -82,7 +97,7 @@ const style = StyleSheet.create({
         width: 160,
         height: 150,
         borderRadius: 25,
-        resizeMode: 'cover',
+        resizeMode: 'stretch',
     },
     text_name: {
         color: 'white',
@@ -94,12 +109,10 @@ const style = StyleSheet.create({
         marginLeft: 10,
         fontSize: 14,
     },
-    text_price: {
-        fontSize: 20,
-        marginTop: 10,
-        marginLeft: 10,
-        marginBottom: 10,
-        color: '#1bac4b',
+    text_giasp: {
+        color: '#1b9f47',
+        marginLeft: 15,
+        fontSize: 19,
         fontWeight: 'bold'
     },
 })

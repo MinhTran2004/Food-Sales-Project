@@ -18,14 +18,19 @@ export class ProductController {
             throw err
         }
     }
-
+    static async getSreachAllProduct(key: any){
+        try{
+            return await ProductModel.getSreachAllProduct(key)
+        }catch(err){
+            console.log(err);
+        }
+    }
     //update yêu thích sản phẩm
     static async updateLikeProduct(id: any, yeuthich: any){
         try{
             await ProductModel.updateLikeProduct(id, yeuthich)
             return await ProductController.getAllProduct()
         }catch(err){
-            console.log();
             console.log("Controller: ", err);
         }
     }

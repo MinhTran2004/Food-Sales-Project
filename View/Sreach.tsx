@@ -1,44 +1,35 @@
 import axios from "axios";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TextInput, Touchable, TouchableOpacity, View } from "react-native";
+import { ProductController } from "../Controller/ProductController";
+import axiosRetry from "axios-retry";
 
-interface Product {
-    tensp: string;
-    giasp: number;
-    anhsp: string;
-    theloai: string;
-    yeuthich: boolean;
-    id: number;
-}
+axiosRetry(axios, {
+    retries: 3,
+    retryDelay: (retryCount) => retryCount * 1000,
+    retryCondition: (error) => error.response?.status === 429 || axiosRetry.isNetworkOrIdempotentRequestError(error),
+});
 
 export default function Sreach({ navigation }: any) {
     const [keyWord, setKeyWord] = useState("")
-    const [data, setData] = useState();
+    const [data, setData] = useState<any>();
 
-    // lay thong tin san pham sang man hinh
-    const getProduct = (item: any): Product => {
-        return {
-            tensp: item.tensp,
-            giasp: item.giasp,
-            anhsp: item.anhsp,
-            theloai: item.theloai,
-            yeuthich: item.yeuthich,
-            id: item.id
-        }
-    }
-
-    const getProductBySreach = async (keyWords: any) => {
-        try {
-            const reponse = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product`, { params: { tensp: keyWords } });
-            setData(reponse.data);
-        } catch (err) {
+    const getProductBySreach = async (key: any) => {
+        try{
+            const reponse = await ProductController.getSreachAllProduct(key)
+            setData(reponse)
+        }catch(err){
             console.log(err);
         }
     }
 
+    useEffect(() => {
+        getProductBySreach(keyWord)
+    }, [data])
+
     const vertiRender = ({ item }: any) => {
         return (
-            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product', { product: getProduct(item) })}>
+            <TouchableOpacity style={{ flex: 1 }}>
                 <View style={{ flex: 1, marginBottom: 10 }}>
                     <View style={[style.container, { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#1f222a' }]}>
 
@@ -70,7 +61,7 @@ export default function Sreach({ navigation }: any) {
             <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <View style={style.layout_sreach}>
                     <Image source={require("../Image/sreach.png")} style={{ width: 20, height: 20, tintColor: 'white' }} />
-                    <TextInput placeholder="Bạn đang cần tìm gì ?" placeholderTextColor={'white'} style={{ marginLeft: 10, color: 'white' }} onChangeText={text => setKeyWord(text)} />
+                    <TextInput placeholder="Nhập tên sản phẩm bạn cần tìm ?" placeholderTextColor={'white'} style={{ marginLeft: 10, color: 'white' }} onChangeText={text => setKeyWord(text)} />
                 </View>
 
                 <TouchableOpacity onPress={() => { getProductBySreach(keyWord) }} style = {{padding: 10, backgroundColor: '#454545', borderRadius: 10, justifyContent: 'center'}}>
@@ -80,11 +71,10 @@ export default function Sreach({ navigation }: any) {
 
             <FlatList
                 data={data}
-                renderItem={vertiRender} />
+                renderItem={vertiRender}
+                style = {{marginTop: 10}} />
         </View>
     )
-
-
 }
 
 const style = StyleSheet.create({
