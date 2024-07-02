@@ -15,6 +15,7 @@ export interface TypeCart {
     anhsp: String;
     soluong: String;
     trangthai: Boolean;
+    makh: String;
 }
 
 export class CartModel implements TypeCart {
@@ -26,8 +27,9 @@ export class CartModel implements TypeCart {
     anhsp: String;
     soluong: String;
     trangthai: Boolean;
+    makh: String;
 
-    constructor(id: String = "", masp: String = "", tensp: String = "", theloai: String = "", giasp: String = "", anhsp: String = "", soluong: String = "", trangthai: Boolean = true) {
+    constructor(id: String = "", masp: String = "", tensp: String = "", theloai: String = "", giasp: String = "", anhsp: String = "", soluong: String = "", trangthai: Boolean = true, makh: String = "") {
         this.id = id;
         this.masp = masp;
         this.tensp = tensp;
@@ -36,9 +38,10 @@ export class CartModel implements TypeCart {
         this.anhsp = anhsp;
         this.soluong = soluong;
         this.trangthai = trangthai;
+        this.makh = makh
     }
 
-    static async addNewCart(data: any) {
+    static async addNewCart(data: any, makh: any) {
         try {
             await axios.post(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart`, {
                 masp: data.masp,
@@ -48,25 +51,47 @@ export class CartModel implements TypeCart {
                 anhsp: data.anhsp,
                 soluong: "1",
                 trangthai: true,
+                makh: makh
             })
         } catch (err) {
             throw err
         }
     }
     //lat tat ca san pham
-    static async getAllCart() {
-        try {
-            const reponse = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart?trangthai=true`)
-            if (reponse.data != null) {
-                return reponse.data.map((item: any) => new CartModel(
-                    item.id, item.masp, item.tensp, item.theloai, item.giasp, item.anhsp, item.soluong, item.trangthai
-                ))
-            } else {
-                return []
+    static async getAllCart(makh: any, chucvu: any) {
+        if (chucvu == "Khachhang") {
+            try {
+                const reponse = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart`, {
+                    params: {
+                        trangthai: true,
+                        makh: makh
+                    }
+                })
+                if (reponse.data != null) {
+                    return reponse.data.map((item: any) => new CartModel(
+                        item.id, item.masp, item.tensp, item.theloai, item.giasp, item.anhsp, item.soluong, item.trangthai
+                    ))
+                } else {
+                    return []
+                }
+            } catch (err) {
+                throw err
             }
-        } catch (err) {
-            throw err
+        }else{
+            try {
+                const reponse = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Cart?trangthai=true`)
+                if (reponse.data != null) {
+                    return reponse.data.map((item: any) => new CartModel(
+                        item.id, item.masp, item.tensp, item.theloai, item.giasp, item.anhsp, item.soluong, item.trangthai
+                    ))
+                } else {
+                    return []
+                }
+            } catch (err) {
+                throw err
+            }
         }
+
     }
     //lay san pham theo id
     static async getCartById(id: String) {

@@ -1,37 +1,39 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { FavouriteController } from "../Controller/FavouriteController";
+import { useSelector } from "react-redux";
 
 export default function Favourite({ navigation }: any) {
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<any>([]);
 
-    //lấy tất cả sản phẩm
-    const getData = async () => {
+    const users = useSelector((state: any) => state.user.users[0].id);
+
+    const deleteFavouriteById = async (masp: any, makh: any) => {
         try {
-            const reponse = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product?yeuthich=true`)
-            setData(reponse.data)
+            await FavouriteController.deleteFavouriteById(masp, makh)
         } catch (err) {
             console.log(err);
         }
     }
 
-    //Update yêu thích sản phẩm
-    const updateLikeProduct = async (id: any, yeuthich: any) => {
+    const getAllFavouriteByMakh = async () => {
         try {
-            const reponse = await axios.put(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product/${id}`, { yeuthich: !yeuthich });
-            getData();
+            const reponse = await FavouriteController.getAllFavouriteByMakh(users)
+            setData(reponse)
         } catch (err) {
-            console.log(err);
+            console.log(err + "123");
         }
     }
+
     useEffect(() => {
-        getData();
-    }, [])
+        getAllFavouriteByMakh()
+    }, [data])
 
 
     const vertiRender = ({ item }: any) => {
         return (
-            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product')}>
+            <TouchableOpacity style={{ flex: 1 }}>
                 <View style={{ flex: 1, marginBottom: 10 }}>
                     <View style={[style.container, { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#1f222a' }]}>
 
@@ -45,24 +47,14 @@ export default function Favourite({ navigation }: any) {
                                     <Text style={style.text_name}>{item.tensp}</Text>
                                     <Text style={style.text_title}>{item.theloai}</Text>
                                 </View>
-
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                     <Text style={style.text_price}>${item.giasp}</Text>
-
                                 </View>
                             </View>
-
                         </View>
-
-                        {item.yeuthich ?
-                            <TouchableOpacity onPress={() => { updateLikeProduct(item.id, item.yeuthich) }} style={{ justifyContent: 'flex-end', marginBottom: 10 }}>
-                                <Image source={require("../Image/onlike.png")} style={style.img_like} />
-                            </TouchableOpacity>
-                            :
-                            <TouchableOpacity onPress={() => { updateLikeProduct(item.id, item.yeuthich) }} style={{ justifyContent: 'flex-end', marginBottom: 10 }}>
-                                <Image source={require("../Image/offlike.png")} style={style.img_like} />
-                            </TouchableOpacity>
-                        }
+                        <TouchableOpacity onPress={() => { deleteFavouriteById(item.masp, users) }} style={{ justifyContent: 'flex-end', marginBottom: 10 }}>
+                            <Image source={require("../Image/onlike.png")} style={style.img_like} />
+                        </TouchableOpacity>
                     </View>
                 </View>
             </TouchableOpacity>
@@ -75,13 +67,13 @@ export default function Favourite({ navigation }: any) {
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
 
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
+                        <TouchableOpacity onPress={() => navigation.goBack()}>
                             <Image source={require("../Image/return.png")} style={{ height: 25, width: 25, tintColor: 'white' }} />
                         </TouchableOpacity>
                         <Text style={{ color: 'white', fontSize: 23, fontWeight: 'bold', marginLeft: 10 }}>My Favourite Restaurants</Text>
                     </View>
 
-                    <Image source={require("../Image/sreach.png")} style={{ width: 20, height: 20, tintColor: 'white' }} />
+                    {/* <Image source={require("../Image/sreach.png")} style={{ width: 20, height: 20, tintColor: 'white' }} /> */}
 
                 </View>
 

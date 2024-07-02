@@ -3,6 +3,7 @@ import axiosRetry from "axios-retry";
 import { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { OderController } from "../Controller/OderController";
+import { useSelector } from "react-redux";
 
 axiosRetry(axios, {
     retries: 3,
@@ -13,10 +14,12 @@ axiosRetry(axios, {
 export default function OderCancelled({ navigation }: any) {
     const [data, setData] = useState<any>([]);
 
+    const user = useSelector((state: any) => state.user.users[0].id);
+
     //lấy tất cả danh sách có trạng thái = "Cancel"
     const getAllOderCancel = async () => {
         try {
-            const reponse = await OderController.getAllOderCancel()
+            const reponse = await OderController.getAllOderCancel(user)
             setData(reponse)
         } catch (err) {
             console.log(err);

@@ -10,36 +10,34 @@ axiosRetry(axios, {
 
 export class ProductController {
     //lấy tất cả sản phẩm
-    static async getAllProduct(): Promise<TypeProduct[]>{
-        try{
+    static async getAllProduct(): Promise<TypeProduct[]> {
+        try {
             return await ProductModel.getAllProduct();
-        }catch(err){
+        } catch (err) {
             console.log("Controller: ", err);
             throw err
         }
     }
-    static async getSreachAllProduct(key: any){
-        try{
+    static async getSreachAllProduct(key: any) {
+        try {
             return await ProductModel.getSreachAllProduct(key)
-        }catch(err){
+        } catch (err) {
             console.log(err);
         }
     }
-    //update yêu thích sản phẩm
-    static async updateLikeProduct(id: any, yeuthich: any){
-        try{
-            await ProductModel.updateLikeProduct(id, yeuthich)
-            return await ProductController.getAllProduct()
-        }catch(err){
-            console.log("Controller: ", err);
+    //lấy tất cả sản phẩm theo id
+    static async getAllProductByid(id: any): Promise<ProductModel> {
+        try {
+            return await ProductModel.getAllProductByid(id)
+        } catch (err) {
+            throw err
         }
     }
-
     //lấy sản phẩm theo thể loại
-    static async getCategoryProduct(theloai:any): Promise<TypeProduct[]>{
-        try{
+    static async getCategoryProduct(theloai: any): Promise<TypeProduct[]> {
+        try {
             return await ProductModel.getCategoryProduct(theloai);
-        }catch(err){
+        } catch (err) {
             console.log("Controller: ", err);
             throw err;
         }

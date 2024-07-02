@@ -3,8 +3,8 @@ import { useEffect, useState } from "react";
 import { FlatList, Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { CartController } from "../Controller/CartController";
 import axiosRetry from "axios-retry";
-import { TypeCart } from "../Model/CartModel";
 import { OderController } from "../Controller/OderController";
+import { useSelector } from "react-redux";
 
 axiosRetry(axios, {
     retries: 3,
@@ -16,9 +16,11 @@ export default function CheckOder({ navigation }: any) {
     const [data, setData] = useState<any>([]);
     const [tongTien, setTongTien] = useState<any>("");
 
+    const user = useSelector((state: any) => state.user.users[0].id);
+
     const getAllCart = async () => {
         try{
-            const reponse = await CartController.getAllCart()
+            const reponse = await CartController.getAllCart(user.id, user.chucvu)
             setData(reponse)
         }catch(err){
             console.log(err);
@@ -34,9 +36,9 @@ export default function CheckOder({ navigation }: any) {
         }
     }
 
-    const addNewOder = async ( data:any, tongtien:any, trangthai:any ) => {
+    const addNewOder = async ( data:any, tongtien:any, trangthai:any, makh:any ) => {
         try{
-            await OderController.addNewOder(data, tongtien, trangthai)
+            await OderController.addNewOder(data, tongtien, trangthai, makh)
         }catch(err){
             console.log(err);
         }
@@ -135,7 +137,7 @@ export default function CheckOder({ navigation }: any) {
                         <TouchableOpacity style={{ backgroundColor: 'green', marginLeft: 10, marginRight: 10, marginBottom: 10, marginTop: 10, borderRadius: 25 }}
                             onPress={() => {
                                 navigation.navigate("Home")
-                                addNewOder(data, tongTien, "Active" )
+                                addNewOder(data, tongTien, "Active", user )
                             }}>
                             <Text style={{ color: 'red', fontSize: 20, textAlign: 'center', padding: 10, fontWeight: 'bold' }}>Mua hàng - {tongTien}</Text>
                         </TouchableOpacity>

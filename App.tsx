@@ -1,11 +1,12 @@
 import React from "react";
-import { NativeBaseProvider } from 'native-base';
 import MainPageNavigation from "./View/MainPageNavigation";
+import { Provider } from "react-redux";
+import store from "./Redux/Store";
 
 export default function App() {
   return (
-    <NativeBaseProvider>
+    <Provider store={store}>
       <MainPageNavigation />
-    </NativeBaseProvider>
+    </Provider>
   );
 }

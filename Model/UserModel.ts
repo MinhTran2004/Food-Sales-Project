@@ -50,6 +50,15 @@ export class UserModel implements TypeUser {
             console.log(err);
         }
     }
+    //get user by id
+    static async getUserById(id: any) {
+        try {
+            const response = await axios.get(`https://65d37253522627d50108eb16.mockapi.io/api/User/${id}`)
+            return response.data            
+        } catch (err) {
+            console.log(err);
+        }
+    }
     //kiem tra xem tai khoan co ton tai khong
     static async checkUserLogin(taikhoan: any, matkhau: any) {
         try {
@@ -61,7 +70,7 @@ export class UserModel implements TypeUser {
             })
             if (response.data.length > 0) {
                 if(response.data[0].matkhau === matkhau){
-                    return true
+                    return response.data
                 }else{
                     return false
                 }
@@ -73,10 +82,10 @@ export class UserModel implements TypeUser {
         }
     }
     //tao tai khoan
-    static async addNewUser(data: any, taikhoan: any) {
+    static async addNewUser(data: any) {
         if (data) {
             try {
-                const response = await axios.post(`https://65d37253522627d50108eb16.mockapi.io/api/User`, data)
+                await axios.post(`https://65d37253522627d50108eb16.mockapi.io/api/User`, data)
                 return true
             } catch (err) {
                 console.log(err);
@@ -89,8 +98,8 @@ export class UserModel implements TypeUser {
     static async updateUser(id: any, data: any) {
         if (data) {
             try {
-                await axios.patch(`https://65d37253522627d50108eb16.mockapi.io/api/User/${id}`, data)
-                return true
+                const reponse =  await axios.patch(`https://65d37253522627d50108eb16.mockapi.io/api/User/${id}`, data)
+                return reponse.data
             } catch (err) {
                 console.log(err);
             }

@@ -1,6 +1,6 @@
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function MainProfile({navigation}:any) {
+export default function MainProfile({ navigation }: any) {
     return (
         <View style={{ flex: 1, backgroundColor: '#181a20' }}>
 
@@ -22,13 +22,15 @@ export default function MainProfile({navigation}:any) {
                         <Text style={{ color: 'white', fontSize: 18, marginTop: 10 }}>0976577025</Text>
                     </View>
                 </View>
-                <Image source={require("../Image/edit.png")} style={{ width: 20, height: 20, resizeMode: 'center', tintColor: '#1bac4b' }} />
+                <TouchableOpacity onPress={() => { navigation.navigate("Profile") }}>
+                    <Image source={require("../Image/edit.png")} style={{ width: 20, height: 20, resizeMode: 'center', tintColor: '#1bac4b' }} />
+                </TouchableOpacity>
             </View>
 
             {/* body 1 */}
             <View style={{ borderBottomWidth: 1, borderColor: '#757575', padding: 10, paddingBottom: 15 }}>
 
-                <TouchableOpacity>
+                <TouchableOpacity onPress={() => { navigation.navigate("Favourite")} }>
                     <View style={style.layout_item} >
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Image source={require("../Image/offlike.png")} style={{ width: 25, height: 25, tintColor: 'white' }} />
@@ -63,7 +65,7 @@ export default function MainProfile({navigation}:any) {
             {/* body 2 */}
             <View style={{ paddingLeft: 10, paddingRight: 10 }}>
 
-                <TouchableOpacity onPress={() => {navigation.navigate("Profile")}}>
+                <TouchableOpacity onPress={() => { navigation.navigate("Profile") }}>
                     <View style={style.layout_item}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }} >
                             <Image source={require("../Image/user.png")} style={{ width: 25, height: 25, tintColor: 'white', }} />

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { FlatList, ScrollView } from 'native-base';
-import { TypeCart } from '../Model/CartModel';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, ScrollView } from 'react-native';
 import { CartController } from '../Controller/CartController';
 import axiosRetry from 'axios-retry';
+import { useSelector } from 'react-redux';
 
 axiosRetry(axios, {
     retries: 3,
@@ -15,29 +14,30 @@ axiosRetry(axios, {
 export default function Cart({ navigation }: any) {
     const [data, setData] = useState<any>([]);
     const [tongTien, setTongTien] = useState<any>("");
+
+    const user = useSelector((state: any) => state.user.users[0]);
+
     //lay tat ca san pham
     const getAllCart = async ()=>{
         try{
-            const reponse = await CartController.getAllCart()
+            const reponse = await CartController.getAllCart(user.id, user.chucvu)
             setData(reponse)
         }catch(err){
             console.log(err);
         }
     }
     //xoa san pham theo id
-    const deleteCartByid = async (id:any) => {
+    const deleteCartByid = async (id:any, makh:any, chucvu:any) => {
         try{
-            const reponse = await CartController.deleteCartByid(id)
-            // setData(reponse)
-            // console.log(reponse);
+            await CartController.deleteCartByid(id, makh, chucvu)
         }catch(err){
             console.log(err);
         }
     }
     //udpate so luong
-    const updateSoluong = async (id:any, soluong:any, trangthai:any) => {
+    const updateSoluong = async (id:any, soluong:any, trangthai:any, makh:any, chucvu:any) => {
         try{
-            await CartController.updateSoluong(id, soluong, trangthai)
+            await CartController.updateSoluong(id, soluong, trangthai, makh, chucvu)
         }catch(err){
             console.log(err);
         }
@@ -73,18 +73,18 @@ export default function Cart({ navigation }: any) {
 
                     <View style={{ alignSelf: 'flex-end' }}>
                         <View style={{ alignItems: 'center', flexDirection: 'row', marginLeft: 30 }}>
-                            <TouchableOpacity style={{ padding: 1 }} onPress={() => updateSoluong( item.id, item.soluong, false ) }>
+                            <TouchableOpacity style={{ padding: 1 }} onPress={() => updateSoluong( item.id, item.soluong, false, user.makh, user.chucvu ) }>
                                 <Image source={require('../Image/minus.png')} style={{ width: 15, height: 15 }} />
                             </TouchableOpacity>
                             <Text style={{ fontSize: 20, marginLeft: 10, marginRight: 10, fontWeight: 'bold', color: 'white' }}>{item.soluong}</Text>
-                            <TouchableOpacity style={{ padding: 1 }} onPress={() =>  updateSoluong( item.id, item.soluong, true )}>
+                            <TouchableOpacity style={{ padding: 1 }} onPress={() =>  updateSoluong( item.id, item.soluong, true, user.makh, user.chucvu )}>
                                 <Image source={require('../Image/plus.png')} style={{ width: 15, height: 15 }} />
                             </TouchableOpacity>
                         </View>
                     </View>
                 </View>
 
-                <TouchableOpacity onPress={() => { deleteCartByid(item.id) }}>
+                <TouchableOpacity onPress={() => { deleteCartByid(item.id, user.makh, user.chucvu) }}>
                     <Text style={{ marginRight: 10, fontSize: 17, color: 'white', textDecorationLine: "underline" }}>Xóa</Text>
                 </TouchableOpacity>
             </View>

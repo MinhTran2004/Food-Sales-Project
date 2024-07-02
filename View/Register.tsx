@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { TypeUser, UserModel } from "../Model/UserModel";
+import { UserModel } from "../Model/UserModel";
 import { userController } from "../Controller/UserController";
 
 export default function Register({ navigation }: any) {
@@ -56,19 +56,19 @@ export default function Register({ navigation }: any) {
             setErrorSdt("Không để trống ô nhập")
             check = false
         }
-
         return check
     }
 
     const addNewUser = async () => {
         if (checkNullData()) {
-            const data = new UserModel(undefined, ten, taikhoan, matkhau, sdt, undefined, undefined)
+            const data = new UserModel(undefined, ten, taikhoan, matkhau, sdt, undefined, "Khachhang")
             try {
                 const check = await userController.getUserByAccount(taikhoan);
                 if (check) {
                     setErrorTaiKhoan("Tài khoản đã tồn tại")
                 }else{
-                    await userController.addNewUser(data, taikhoan)
+                    await userController.addNewUser(data)
+                    navigation.navigate("Login")
                 }
 
             } catch (err) {

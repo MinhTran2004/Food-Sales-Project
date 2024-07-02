@@ -4,6 +4,7 @@ import { FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpac
 import { TypeProduct } from "../Model/ProductModel";
 import { ProductController } from "../Controller/ProductController";
 import axiosRetry from "axios-retry";
+import { useSelector } from "react-redux";
 
 axiosRetry(axios, {
     retries: 3,
@@ -14,39 +15,37 @@ axiosRetry(axios, {
 export default function Home({ navigation }: any) {
     const [data, setData] = useState<TypeProduct[]>([]);
     const [theloai, setTheLoai] = useState<TypeProduct[]>([]);
+    const [user, setUser] = useState<any>("");
+
+    const users = useSelector((state: any) => state.user.users[0]);
+    const getUser = (users: any) => {
+        setUser(users)
+    }
 
     //lấy tất cả sản phẩm
-    const getAllProduct = async() => {
-        try{
+    const getAllProduct = async () => {
+        try {
             const reponse = await ProductController.getAllProduct()
             setData(reponse)
             setTheLoai(reponse)
-        }catch(err){
+        } catch (err) {
             console.log(err);
         }
     }
     //lấy tất cả sản phẩm theo thể loại
-    const getCategoryProduct = async (theloai:any) =>{
-        try{
+    const getCategoryProduct = async (theloai: any) => {
+        try {
             const reponse = await ProductController.getCategoryProduct(theloai)
             setTheLoai(reponse)
-        }catch(err){
+        } catch (err) {
             console.log(err);
         }
     }
-    //update yeu thich product
-    const updateLikeProduct = async (id:any, yeuthich:any) => {
-        try{
-            const reponse = await ProductController.updateLikeProduct(id, yeuthich) 
-            getAllProduct()
-        }catch(err){
-            console.log(err);
-        }
-    } 
 
     useEffect(() => {
         getAllProduct()
-    },[])
+        getUser(users)
+    }, [user, data])
 
     const data_category = [
         { name: 'All' },
@@ -68,10 +67,10 @@ export default function Home({ navigation }: any) {
             </TouchableOpacity>
         )
     }
-    
+
     const horiRender = ({ item }: any) => {
         return (
-            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product', { product: item }) }>
+            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product', { product: item })}>
                 <View style={{ flex: 1, marginRight: 10 }}>
                     <View style={[style.container, { backgroundColor: '#1f222a' }]}>
                         <View style={{ padding: 10 }}>
@@ -82,16 +81,7 @@ export default function Home({ navigation }: any) {
                             <Text style={style.text_title}>{item.theloai}</Text>
                             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                                 <Text style={style.text_price}>${item.giasp}</Text>
-
-                                {item.yeuthich ?
-                                    <TouchableOpacity onPress={() => { updateLikeProduct(item.id, item.yeuthich) }}>
-                                        <Image source={require("../Image/onlike.png")} style={style.img_like} />
-                                    </TouchableOpacity>
-                                    :
-                                    <TouchableOpacity onPress={() => { updateLikeProduct(item.id, item.yeuthich) }}>
-                                        <Image source={require("../Image/offlike.png")} style={style.img_like} />
-                                    </TouchableOpacity>
-                                }
+                                <Text style={style.text_luotmua}>Đã bán {item.luotmua}</Text>
                             </View>
                         </View>
                     </View>
@@ -102,16 +92,16 @@ export default function Home({ navigation }: any) {
 
     const vertiRender = ({ item }: any) => {
         return (
-            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product', { product: item }) }>
+            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product', { product: item })}>
                 <View style={{ flex: 1, marginBottom: 10 }}>
                     <View style={[style.container, { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#1f222a' }]}>
 
-                        <View style={{ flexDirection: 'row' }}>
+                        <View style={{ flexDirection: 'row', flex: 1 }}>
                             <View style={{ padding: 10 }}>
                                 <Image source={{ uri: item.anhsp }} style={[style.image_item, { height: 100, width: 100 }]} />
                             </View>
 
-                            <View style={{ justifyContent: 'space-between' }}>
+                            <View style={{ justifyContent: 'space-between', flex: 1 }}>
                                 <View>
                                     <Text style={style.text_name}>{item.tensp}</Text>
                                     <Text style={style.text_title}>{item.theloai}</Text>
@@ -119,20 +109,10 @@ export default function Home({ navigation }: any) {
 
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                     <Text style={style.text_price}>${item.giasp}</Text>
+                                    <Text style={style.text_luotmua}>Đã bán {item.luotmua}</Text>
                                 </View>
                             </View>
-
                         </View>
-
-                        {item.yeuthich ?
-                            <TouchableOpacity onPress={() => { updateLikeProduct(item.id, item.yeuthich) }} style={{ justifyContent: 'flex-end', marginBottom: 10 }}>
-                                <Image source={require("../Image/onlike.png")} style={style.img_like} />
-                            </TouchableOpacity>
-                            :
-                            <TouchableOpacity onPress={() => { updateLikeProduct(item.id, item.yeuthich) }} style={{ justifyContent: 'flex-end', marginBottom: 10 }}>
-                                <Image source={require("../Image/offlike.png")} style={style.img_like} />
-                            </TouchableOpacity>
-                        }
                     </View>
                 </View>
             </TouchableOpacity>
@@ -149,8 +129,14 @@ export default function Home({ navigation }: any) {
                         <View style={{ flexDirection: 'row', marginTop: 10 }}>
                             <Image source={require('../Image/man.png')} style={{ width: 50, height: 50 }} />
                             <View style={{ justifyContent: 'space-between', marginLeft: 10 }}>
-                                <Text style={{ fontSize: 17, color: 'white' }}>Khách hàng</Text>
-                                <Text style={[style.title, { color: 'white' }]}>Trần Công Minh</Text>
+                                {user ?
+                                    <View>
+                                        <Text style={[style.title, { color: 'white' }]}>{user.ten}</Text>
+                                        <Text style={{ fontSize: 16, color: 'white' }}>{user.chucvu}</Text>
+                                    </View>
+                                    :
+                                    <View></View>
+                                }
                             </View>
                         </View>
 
@@ -311,6 +297,12 @@ const style = StyleSheet.create({
         marginBottom: 10,
         color: 'green',
         fontWeight: 'bold'
+    },
+    text_luotmua: {
+        fontSize: 15,
+        color: 'white',
+        paddingRight: 10,
+        alignSelf: 'center'
     },
     img_like: {
         width: 23,

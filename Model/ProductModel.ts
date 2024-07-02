@@ -12,6 +12,7 @@ export interface TypeProduct {
     tensp: String;
     giasp: String;
     anhsp: String;
+    luotmua:String,
     theloai: String;
     yeuthich: Boolean;
 }
@@ -21,14 +22,16 @@ export class ProductModel implements TypeProduct {
     tensp: String;
     giasp: String;
     anhsp: String;
+    luotmua:String;
     theloai: String;
     yeuthich: Boolean;
 
-    constructor(id: String = "", tensp: String = "", giasp: String = "", anhsp: String = "", theloai: String = "", yeuthich: Boolean = false) {
+    constructor(id: String = "", tensp: String = "", giasp: String = "", anhsp: String = "", theloai: String = "", yeuthich: Boolean = false, luotmua:String = "") {
         this.id = id;
         this.tensp = tensp;
         this.theloai = theloai;
         this.giasp = giasp;
+        this.luotmua = luotmua;
         this.anhsp = anhsp;
         this.yeuthich = yeuthich
     };
@@ -38,8 +41,18 @@ export class ProductModel implements TypeProduct {
         try {
             const reponse = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product?yeuthich=false`);
             return reponse.data.map((item: any) => new ProductModel(
-                item.id, item.tensp, item.giasp, item.anhsp, item.theloai, item.yeuthich
+                item.id, item.tensp, item.giasp, item.anhsp, item.theloai, item.yeuthich, item.luotmua
             ));
+        } catch (err) {
+            console.log("ModelProduct: ", err);
+            throw err
+        }
+    }
+    //lấy tất cả sản phẩm theo id
+    static async getAllProductByid(id:any): Promise<ProductModel> {
+        try {
+            const reponse = await axios.get(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product/${id}`);
+            return reponse.data
         } catch (err) {
             console.log("ModelProduct: ", err);
             throw err
@@ -73,23 +86,11 @@ export class ProductModel implements TypeProduct {
                 }
             })
             return reponse.data.map((item: any) => new ProductModel(
-                item.id, item.tensp, item.giasp, item.anhsp, item.theloai, item.yeuthich
+                item.id, item.tensp, item.giasp, item.anhsp, item.theloai, item.yeuthich, item.luotmua
             ))
         } catch (err) {
             console.log("ProductModel: ", err);
             throw err
         }
     }
-
-    //update giá trị thuộc tính yêu thích
-    static async updateLikeProduct(id: any, yeuthich: any) {
-        try {
-            await axios.put(`https://65d5e0fcf6967ba8e3bcd759.mockapi.io/api/Product/${id}`, { yeuthich: !yeuthich });
-        } catch (err) {
-            console.log("ProductModel: ", err);
-        }
-    }
-
-
-
 }

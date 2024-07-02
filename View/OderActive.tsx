@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { OderController } from "../Controller/OderController";
 import axiosRetry from "axios-retry";
+import { useSelector } from "react-redux";
 
 axiosRetry(axios, {
     retries: 3,
@@ -13,18 +14,21 @@ axiosRetry(axios, {
 export default function OderActive({ navigation }: any) {
     const [data, setData] = useState<any>([]);
 
+    const user = useSelector((state: any) => state.user.users[0].id);
+
     const getAllOder = async () => {
         try {
-            const reponse = await OderController.getAllOderActive()
+            const reponse = await OderController.getAllOderActive(user)
             setData(reponse)
         } catch (err) {
             console.log(err);
         }
     }
 
-    const updateStatusOder = async (id: any, status: any) => {
+    const updateStatusOder = async (id: any, status: any, makh:any) => {
         try {
-            await OderController.updateStatusOder(id, status)
+            const reponse = await OderController.updateStatusOder(id, status, makh)
+            setData(reponse)
         } catch (err) {
             console.log(err);
         }
@@ -79,10 +83,10 @@ export default function OderActive({ navigation }: any) {
                         <Text style={{ color: 'white', textAlign: 'right', fontSize: 18, paddingRight: 15, marginTop: 10 }}>Tổng tiền: {item.tongtien}</Text>
 
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 15 }}>
-                            <TouchableOpacity style={style.btn_checkOder} onPress={() => { updateStatusOder(item.id, "Cancel") }}>
+                            <TouchableOpacity style={style.btn_checkOder} onPress={() => { updateStatusOder(item.id, "Cancel", user) }}>
                                 <Text style={{ color: 'white', textAlign: 'center' }}>Cancel Order</Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={style.btn_checkOder} onPress={() => { updateStatusOder(item.id, "Completed") }}>
+                            <TouchableOpacity style={style.btn_checkOder} onPress={() => { updateStatusOder(item.id, "Completed", user) }}>
                                 <Text style={{ color: 'white', textAlign: 'center' }}>Track Driver</Text>
                             </TouchableOpacity>
                         </View>

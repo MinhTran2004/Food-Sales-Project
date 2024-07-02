@@ -1,13 +1,17 @@
 import { useState } from "react";
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { userController } from "../Controller/UserController";
+import { useDispatch } from "react-redux";
+import { setUser } from "../Redux/Reducer/userSlice";
 
 export default function Login({ navigation }: any) {
-    const [taikhoan, setTaiKhoan] = useState("")
-    const [matkhau, setMatKhau] = useState("")
+    const [taikhoan, setTaiKhoan] = useState("minh2004@gmail.com")
+    const [matkhau, setMatKhau] = useState("123")
     const [errorTaikhoan, setErrorTaiKhoan] = useState("")
     const [errorMatkhau, setErrorMatKhau] = useState("")
     const [hidePassword, setHidePassword] = useState(true);
+
+    const dispatch = useDispatch();
 
     const checkNullData = () => {
         let check = true
@@ -38,7 +42,8 @@ export default function Login({ navigation }: any) {
             try {
                 const check = await userController.checkUserLogin(taikhoan, matkhau);
                 if (check) {
-                    navigation.navigate("Main")
+                    navigation.navigate('Main')
+                    setData(check)
                 }else{
                     setErrorMatKhau("Sai mật khẩu")
                 }
@@ -47,6 +52,11 @@ export default function Login({ navigation }: any) {
             }
         }
     }
+
+    const setData = (check:any) => {
+        dispatch(setUser( check ))
+    }
+
     return (
         <View style={{ flex: 1, backgroundColor: '#181a20', padding: 10 }}>
             <Image source={require("../Image/logo.png")} style={style.logo} />

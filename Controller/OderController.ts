@@ -10,42 +10,42 @@ axiosRetry(axios, {
 
 export class OderController {
     //add data Oder
-    static async addNewOder(arrId: [], tongtien: any, trangthai: any) {
+    static async addNewOder(arrId: [], tongtien: any, trangthai: any, makh:any) {
         try {
-            await OderModel.addNewOrder(arrId, tongtien, trangthai)
+            await OderModel.addNewOrder(arrId, tongtien, trangthai, makh)
         } catch (err) {
             console.log(err);
         }
     }
     //lấy tất cả danh sách có trạng thái = "Active"
-    static async getAllOderActive() {
+    static async getAllOderActive(makh:any) {
         try {
-            return await OderModel.getAllOderActive()
+            return await OderModel.getAllOderActive(makh)
         } catch (err) {
             throw err
         }
     }
     //lấy tất cả danh sách có trạng thái = "Completed"
-    static async getAllOderCompleted() {
+    static async getAllOderCompleted(makh:any) {
         try {
-            return await OderModel.getAllOderCompleted()
+            return await OderModel.getAllOderCompleted(makh)
         } catch (err) {
             throw err
         }
     }
     //lấy tất cả danh sách có trạng thái = "Cancel"
-    static async getAllOderCancel() {
+    static async getAllOderCancel(makh:any) {
         try {
-            return await OderModel.getAllOderCancel()
+            return await OderModel.getAllOderCancel(makh)
         } catch (err) {
             throw err
         }
     }
     // update trang thai khi xac nhan don hang
-    static async updateStatusOder(id: any, status: any) {
+    static async updateStatusOder(id: any, status: any, makh:any) {
         try {
             await OderModel.updateStatusOder(id, status)
-            await OderController.getAllOderActive()
+            return await OderController.getAllOderActive(makh)
         } catch (err) {
             console.log(err);
         }

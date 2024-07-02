@@ -17,6 +17,14 @@ export class userController {
             console.log(err);
         }
     }
+    //get user by id
+    static async getUserById(id: any){
+        try{
+            return await UserModel.getUserById(id)
+        }catch(err){
+            console.log(err);
+        }
+    }
     //kiem tra xem tai khoan co ton tai khong
     static async checkUserLogin(taikhoan: any, matkhau: any){
         try{
@@ -26,9 +34,9 @@ export class userController {
         }
     }
     //tao tai khoan
-    static async addNewUser(data: any, taikhoan:any) {
+    static async addNewUser(data: any) {
         try {
-            await UserModel.addNewUser(data, taikhoan)
+            await UserModel.addNewUser(data)
         } catch (err) {
             console.log(err);
         }
@@ -36,7 +44,7 @@ export class userController {
     //update tai khoa123
     static async updateUser(id: any, data: any) {
         try {
-            await UserModel.updateUser(id, data)
+           return await UserModel.updateUser(id, data)
         } catch (err) {
             console.log(err);
         }

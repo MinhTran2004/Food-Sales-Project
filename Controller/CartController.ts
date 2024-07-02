@@ -10,9 +10,9 @@ axiosRetry(axios, {
 
 export class CartController {
     // lấy tất cả sản phẩm trong cart
-    static async getAllCart() {
+    static async getAllCart(makh:any, chucvu:any) {
         try {
-            return await CartModel.getAllCart()
+            return await CartModel.getAllCart(makh, chucvu)
         } catch (err) {
             return []
         }
@@ -26,19 +26,19 @@ export class CartController {
         }
     }
     // thêm sản phẩm
-    static async addNewCart(data: any) {
+    static async addNewCart(data: any, makh:any) {
         try {
-            await CartModel.addNewCart(data)
-            return await CartController.getAllCart()
+            await CartModel.addNewCart(data, makh)
+            // return await CartController.getAllCart(makh)
         } catch (err) {
             throw err
         }
     }
     // xóa sản phẩm theo id
-    static async deleteCartByid(id: any) {
+    static async deleteCartByid(id: any, makh:any, chucvu:any) {
         try {
             await CartModel.deleteCartByid(id)
-            await CartController.getAllCart()
+            await CartController.getAllCart(makh, chucvu)
         } catch (err) {
             throw err
         }
@@ -52,14 +52,14 @@ export class CartController {
         }
     }
     // update số lượng
-    static async updateSoluong(id: any, soluong: any, trangthai: Boolean) {
+    static async updateSoluong(id: any, soluong: any, trangthai: Boolean, makh:any, chucvu:any) {
         try {
             if (soluong < 1) {
-                await CartController.deleteCartByid(id)
-                return await CartController.getAllCart()
+                await CartController.deleteCartByid(id, makh, chucvu)
+                return await CartController.getAllCart( makh, chucvu )
             } else {
                 await CartModel.updateSoluong(id, soluong, trangthai)
-                return await CartController.getAllCart()
+                return await CartController.getAllCart( makh, chucvu )
             }
         } catch (err) {
             throw err
