@@ -1,10 +1,10 @@
 Account
 - Admin
-email: admin
-pass: 123
+{ email: admin
+pass: 123 }
 - User: 
-email: minh2004@gmail.com
-pass: 123
+{ email: minh2004@gmail.com
+pass: 123 }
 
 <<<<<<< HEAD
 This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
