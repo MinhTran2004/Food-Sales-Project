@@ -47,72 +47,126 @@ export class OderModel implements TypeOder {
         }
     }
     //lấy tất cả danh sách có trạng thái = "Active"
-    static async getAllOderActive(makh: any) {
-        try {
-            const reposne = await axios.get(`https://65d37253522627d50108eb16.mockapi.io/api/Oder`, {
-                params: {
-                    trangthai: "Active",
-                    makh: makh
+    static async getAllOderActive(makh: any, chucvu:any) {
+        if(chucvu === "admin"){
+            try {
+                const reposne = await axios.get(`https://65d37253522627d50108eb16.mockapi.io/api/Oder?trangthai=Active`)
+                if (reposne.data != null) {
+                    const promises = reposne.data.map(async (item: any) => {
+                        const cart = await CartController.getCartById(item.magh);
+                        return { cart, id: item.id, magh: item.magh, tongtien: item.tongtien, trangthai: item.trangthai }
+                    })
+                    const data = await Promise.all(promises)
+                    return data
+                } else {
+                    return []
                 }
-            })
-            if (reposne.data != null) {
-                const promises = reposne.data.map(async (item: any) => {
-                    const cart = await CartController.getCartById(item.magh);
-                    return { cart, id: item.id, magh: item.magh, tongtien: item.tongtien, trangthai: item.trangthai }
-                })
-                const data = await Promise.all(promises)
-                return data
-            } else {
-                return []
+            } catch (err) {
+                throw err
             }
-        } catch (err) {
-            throw err
+        }else{
+            try {
+                const reposne = await axios.get(`https://65d37253522627d50108eb16.mockapi.io/api/Oder`, {
+                    params: {
+                        trangthai: "Active",
+                        makh: makh
+                    }
+                })
+                if (reposne.data != null) {
+                    const promises = reposne.data.map(async (item: any) => {
+                        const cart = await CartController.getCartById(item.magh);
+                        return { cart, id: item.id, magh: item.magh, tongtien: item.tongtien, trangthai: item.trangthai }
+                    })
+                    const data = await Promise.all(promises)
+                    return data
+                } else {
+                    return []
+                }
+            } catch (err) {
+                throw err
+            }
         }
     }
     //lấy tất cả danh sách có trạng thái = "Completed"
-    static async getAllOderCompleted(makh: any) {
-        try {
-            const reposne = await axios.get(`https://65d37253522627d50108eb16.mockapi.io/api/Oder`, {
-                params: {
-                    trangthai: "Completed",
-                    makh: makh
+    static async getAllOderCompleted(makh: any, chucvu:any) {
+        if(chucvu === "admin"){
+            try {
+                const reposne = await axios.get(`https://65d37253522627d50108eb16.mockapi.io/api/Oder?trangthai=Completed`)
+                if (reposne.data != null) {
+                    const promises = reposne.data.map(async (item: any) => {
+                        const cart = await CartController.getCartById(item.magh);
+                        return { cart, id: item.id, magh: item.magh, tongtien: item.tongtien, trangthai: item.trangthai }
+                    })
+                    const data = await Promise.all(promises)
+                    return data
+                } else {
+                    return []
                 }
-            })
-            if (reposne.data != null) {
-                const promises = reposne.data.map(async (item: any) => {
-                    const cart = await CartController.getCartById(item.magh);
-                    return { cart, id: item.id, magh: item.magh, tongtien: item.tongtien, trangthai: item.trangthai }
-                })
-                const data = await Promise.all(promises)
-                return data
-            } else {
-                return []
+            } catch (err) {
+                throw err
             }
-        } catch (err) {
-            throw err
+        }else{
+            try {
+                const reposne = await axios.get(`https://65d37253522627d50108eb16.mockapi.io/api/Oder`, {
+                    params: {
+                        trangthai: "Completed",
+                        makh: makh
+                    }
+                })
+                if (reposne.data != null) {
+                    const promises = reposne.data.map(async (item: any) => {
+                        const cart = await CartController.getCartById(item.magh);
+                        return { cart, id: item.id, magh: item.magh, tongtien: item.tongtien, trangthai: item.trangthai }
+                    })
+                    const data = await Promise.all(promises)
+                    return data
+                } else {
+                    return []
+                }
+            } catch (err) {
+                throw err
+            }
         }
     }
     //lấy tất cả danh sách có trạng thái = "Cancel"
-    static async getAllOderCancel(makh: any) {
-        try {
-            const reposne = await axios.get(`https://65d37253522627d50108eb16.mockapi.io/api/Oder`, {
-                params: {
-                    trangthai: "Cancel",
-                    makh: makh
+    static async getAllOderCancel(makh: any, chucvu:any) {
+        if(chucvu === "admin"){
+            try {
+                const reposne = await axios.get(`https://65d37253522627d50108eb16.mockapi.io/api/Oder?trangthai=Cancel`)
+                if (reposne.data != null) {
+                    const promises = reposne.data.map(async (item: any) => {
+                        const cart = await CartController.getCartById(item.magh);
+                        return { cart, id: item.id, magh: item.magh, tongtien: item.tongtien, trangthai: item.trangthai }
+                    })
+                    const data = await Promise.all(promises)
+                    return data
+                } else {
+                    return []
                 }
-            })
-            if (reposne.data != null) {
-                const promises = reposne.data.map(async (item: any) => {
-                    const cart = await CartController.getCartById(item.magh);
-                    return { cart, id: item.id, magh: item.magh, tongtien: item.tongtien, trangthai: item.trangthai }
-                })
-                const data = await Promise.all(promises)
-                return data
-            } else {
-                return []
+            } catch (err) {
+                throw err
             }
-        } catch (err) {
-            throw err
+        }else{
+            try {
+                const reposne = await axios.get(`https://65d37253522627d50108eb16.mockapi.io/api/Oder`, {
+                    params: {
+                        trangthai: "Cancel",
+                        makh: makh
+                    }
+                })
+                if (reposne.data != null) {
+                    const promises = reposne.data.map(async (item: any) => {
+                        const cart = await CartController.getCartById(item.magh);
+                        return { cart, id: item.id, magh: item.magh, tongtien: item.tongtien, trangthai: item.trangthai }
+                    })
+                    const data = await Promise.all(promises)
+                    return data
+                } else {
+                    return []
+                }
+            } catch (err) {
+                throw err
+            }
         }
     }
     // update trang thai khi xac nhan don hang

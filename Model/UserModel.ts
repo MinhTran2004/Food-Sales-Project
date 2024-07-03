@@ -54,7 +54,7 @@ export class UserModel implements TypeUser {
     static async getUserById(id: any) {
         try {
             const response = await axios.get(`https://65d37253522627d50108eb16.mockapi.io/api/User/${id}`)
-            return response.data            
+            return response.data
         } catch (err) {
             console.log(err);
         }
@@ -69,9 +69,9 @@ export class UserModel implements TypeUser {
                 }
             })
             if (response.data.length > 0) {
-                if(response.data[0].matkhau === matkhau){
+                if (response.data[0].matkhau === matkhau) {
                     return response.data
-                }else{
+                } else {
                     return false
                 }
             } else {
@@ -98,7 +98,7 @@ export class UserModel implements TypeUser {
     static async updateUser(id: any, data: any) {
         if (data) {
             try {
-                const reponse =  await axios.patch(`https://65d37253522627d50108eb16.mockapi.io/api/User/${id}`, data)
+                const reponse = await axios.patch(`https://65d37253522627d50108eb16.mockapi.io/api/User/${id}`, data)
                 return reponse.data
             } catch (err) {
                 console.log(err);
@@ -107,7 +107,4 @@ export class UserModel implements TypeUser {
             return false
         }
     }
-
-
-
 }

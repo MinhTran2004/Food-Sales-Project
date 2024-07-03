@@ -14,26 +14,28 @@ axiosRetry(axios, {
 export default function OderActive({ navigation }: any) {
     const [data, setData] = useState<any>([]);
 
-    const user = useSelector((state: any) => state.user.users[0].id);
+    const user = useSelector((state: any) => state.user.users[0]);
 
     const getAllOder = async () => {
         try {
-            const reponse = await OderController.getAllOderActive(user)
-            setData(reponse)
+            const reponse = await OderController.getAllOderActive(user.id, user.chucvu)
+            if ( reponse ){
+                setData(reponse)
+            }else{
+                console.log("OderActive null data");
+            }
         } catch (err) {
             console.log(err);
         }
     }
-
-    const updateStatusOder = async (id: any, status: any, makh:any) => {
+    const updateStatusOder = async (id: any, status: any, makh: any) => {
         try {
-            const reponse = await OderController.updateStatusOder(id, status, makh)
+            const reponse = await OderController.updateStatusOder(id, status, makh, user.chucvu)
             setData(reponse)
         } catch (err) {
             console.log(err);
         }
     }
-
     useEffect(() => {
         getAllOder()
     }, [data])
@@ -49,7 +51,7 @@ export default function OderActive({ navigation }: any) {
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
                         <View style={{ justifyContent: 'space-between' }}>
                             <Text style={style.text_name}>{item.tensp}</Text>
-                            <View style = {{flexDirection: 'row'}}>
+                            <View style={{ flexDirection: 'row' }}>
                                 <Text style={style.text_giasp}>${Number(item.giasp).toLocaleString('vi-VN')}</Text>
                                 <View style={{ backgroundColor: '#1bac4b', padding: 5, borderRadius: 8, marginLeft: 10 }}>
                                     <Text style={{ color: 'white', fontSize: 13, paddingLeft: 5, paddingRight: 5 }}>Paid</Text>
@@ -82,14 +84,18 @@ export default function OderActive({ navigation }: any) {
 
                         <Text style={{ color: 'white', textAlign: 'right', fontSize: 18, paddingRight: 15, marginTop: 10 }}>Tổng tiền: {item.tongtien}</Text>
 
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 15 }}>
-                            <TouchableOpacity style={style.btn_checkOder} onPress={() => { updateStatusOder(item.id, "Cancel", user) }}>
-                                <Text style={{ color: 'white', textAlign: 'center' }}>Cancel Order</Text>
-                            </TouchableOpacity>
-                            <TouchableOpacity style={style.btn_checkOder} onPress={() => { updateStatusOder(item.id, "Completed", user) }}>
-                                <Text style={{ color: 'white', textAlign: 'center' }}>Track Driver</Text>
-                            </TouchableOpacity>
-                        </View>
+                        {user.chucvu === "admin" ?
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-around', paddingBottom: 15 }}>
+                                <TouchableOpacity style={style.btn_checkOder} onPress={() => { updateStatusOder(item.id, "Cancel", user.id) }}>
+                                    <Text style={{ color: 'white', textAlign: 'center' }}>Cancel Order</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={style.btn_checkOder} onPress={() => { updateStatusOder(item.id, "Completed", user.id) }}>
+                                    <Text style={{ color: 'white', textAlign: 'center' }}>Track Driver</Text>
+                                </TouchableOpacity>
+                            </View>
+                            :
+                            <View></View>
+                        }
                     </View>
                 </TouchableOpacity>
         )

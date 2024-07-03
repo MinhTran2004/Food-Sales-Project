@@ -14,21 +14,25 @@ axiosRetry(axios, {
 export default function OderCancelled({ navigation }: any) {
     const [data, setData] = useState<any>([]);
 
-    const user = useSelector((state: any) => state.user.users[0].id);
+    const user = useSelector((state: any) => state.user.users[0]);
 
     //lấy tất cả danh sách có trạng thái = "Cancel"
     const getAllOderCancel = async () => {
         try {
-            const reponse = await OderController.getAllOderCancel(user)
-            setData(reponse)
+            const reponse = await OderController.getAllOderCancel(user.id, user.chucvu)
+            if(reponse){
+                setData(reponse)
+            }else{
+                console.log("Oder cancel null data");
+            }
         } catch (err) {
-            console.log(err);
+            console.log(err + "123");
         }
     }
 
     useEffect(() => {
         getAllOderCancel();
-    }, [data])
+    }, [1,data])
 
     const renderItem = ({ item }: any) => {
         return (

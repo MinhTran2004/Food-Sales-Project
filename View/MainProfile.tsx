@@ -145,8 +145,8 @@ export default function MainProfile({ navigation }: any) {
                     </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity>
-                    <View style={style.layout_item} >
+                <TouchableOpacity onPress={() => {navigation.navigate("Login")}}>
+                    <View style={style.layout_item}>
                         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                             <Image source={require("../Image/logOut.png")} style={{ width: 25, height: 25, tintColor: '#e85051' }} />
                             <Text style={{ color: '#e85051', fontSize: 20, marginLeft: 15 }}>Log Out</Text>

@@ -18,34 +18,34 @@ export class OderController {
         }
     }
     //lấy tất cả danh sách có trạng thái = "Active"
-    static async getAllOderActive(makh:any) {
+    static async getAllOderActive(makh:any, chucvu:any) {
         try {
-            return await OderModel.getAllOderActive(makh)
+            return await OderModel.getAllOderActive(makh, chucvu)
         } catch (err) {
             throw err
         }
     }
     //lấy tất cả danh sách có trạng thái = "Completed"
-    static async getAllOderCompleted(makh:any) {
+    static async getAllOderCompleted(makh:any, chucvu:any) {
         try {
-            return await OderModel.getAllOderCompleted(makh)
+            return await OderModel.getAllOderCompleted(makh, chucvu)
         } catch (err) {
             throw err
         }
     }
     //lấy tất cả danh sách có trạng thái = "Cancel"
-    static async getAllOderCancel(makh:any) {
+    static async getAllOderCancel(makh:any, chucvu:any) {
         try {
-            return await OderModel.getAllOderCancel(makh)
+            return await OderModel.getAllOderCancel(makh, chucvu)
         } catch (err) {
             throw err
         }
     }
     // update trang thai khi xac nhan don hang
-    static async updateStatusOder(id: any, status: any, makh:any) {
+    static async updateStatusOder(id: any, status: any, makh:any, chucvu:any) {
         try {
             await OderModel.updateStatusOder(id, status)
-            return await OderController.getAllOderActive(makh)
+            return await OderController.getAllOderActive(makh, chucvu)
         } catch (err) {
             console.log(err);
         }

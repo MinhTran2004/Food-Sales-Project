@@ -12,15 +12,19 @@ axiosRetry(axios, {
 });
 
 export default function OderCompleted({ navigation }: any) {
-    const [data, setData] = useState<any>([]);
+    const [data, setData] = useState<any>();
 
-    const user = useSelector((state: any) => state.user.users[0].id);
+    const user = useSelector((state: any) => state.user.users[0]);
 
     //lấy tất cả danh sách có trạng thái = "Completed"
     const getAllOderCompleted = async () => {
         try {
-            const reponse = await OderController.getAllOderCompleted(user)
-            setData(reponse)
+            const reponse = await OderController.getAllOderCompleted(user.id, user.chucvu)
+            if(reponse){
+                setData(reponse)
+            }else{
+                console.log("Oder completed null data");
+            }
         } catch (err) {
             console.log(err);
         }

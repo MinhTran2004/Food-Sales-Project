@@ -91,7 +91,6 @@ export class CartModel implements TypeCart {
                 throw err
             }
         }
-
     }
     //lay san pham theo id
     static async getCartById(id: String) {

@@ -29,7 +29,6 @@ export class CartController {
     static async addNewCart(data: any, makh:any) {
         try {
             await CartModel.addNewCart(data, makh)
-            // return await CartController.getAllCart(makh)
         } catch (err) {
             throw err
         }
