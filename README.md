@@ -1,9 +1,9 @@
 Account
 - Admin
-{ email: admin
+{ email: admin, 
 pass: 123 }
 - User: 
-{ email: minh2004@gmail.com
+{ email: minh2004@gmail.com, 
 pass: 123 }
 
 <<<<<<< HEAD
