@@ -35,7 +35,7 @@ export default function OderCancelled({ navigation }: any) {
 
     const renderItem = ({ item }: any) => {
         return (
-            <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product')}>
+            <TouchableOpacity style={{ flex: 1, backgroundColor: "#1f222a" }} onPress={() => navigation.navigate('Product')}>
                 <View style={{ flex: 1, marginBottom: 20 }}>
                     <View style={[style.container, { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#1f222a' }]}>
 
@@ -66,7 +66,7 @@ export default function OderCancelled({ navigation }: any) {
 
     const vertiRender = ({ item }: any) => {
         return (
-            <View>
+            <View style = {{marginBottom: 10}}>
                 <FlatList
                     data={item.cart}
                     renderItem={renderItem}

@@ -37,7 +37,7 @@ export default function OderCompleted({ navigation }: any) {
     const renderItem = ({ item }: any) => {
         return (
             item.anhsp ? (
-                <View style={{ flexDirection: 'row', flex: 1, padding: 10 }}>
+                <View style={{ flexDirection: 'row', flex: 1, padding: 10, backgroundColor:"#1f222a" }}>
                     <View>
                         <Image source={{ uri: item.anhsp }} style={[style.image_item, { height: 100, width: 100 }]} />
                     </View>
@@ -66,7 +66,7 @@ export default function OderCompleted({ navigation }: any) {
 
     const vertiRender = ({ item }: any) => {
         return (
-            <View style={{ flex: 1, marginBottom: 20 }}>
+            <View style={{ flex: 1, marginBottom: 20, backgroundColor: "#1f222a"}}>
                 <FlatList
                     data={item.cart}
                     renderItem={renderItem} />
