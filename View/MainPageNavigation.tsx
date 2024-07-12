@@ -59,7 +59,7 @@ function TopTabs() {
     <TopTab.Navigator screenOptions={{ tabBarStyle: { backgroundColor: '#181a20' } }}>
       <TopTab.Screen name="Active" component={OderActive} options={{ tabBarLabelStyle: { color: '#606161' } }} />
       <TopTab.Screen name="Completed" component={OderCompleted} options={{ tabBarLabelStyle: { color: '#606161' } }} />
-      <TopTab.Screen name="Cancelled" component={OderCancelled} options={{ tabBarLabelStyle: { color: '#606161' } }} />
+      <TopTab.Screen name="Cancelled" component={OderCancelled} options={{ tabBarLabelStyle: { color: '#606161' } }} /> 
     </TopTab.Navigator>
   );
 }

@@ -36,6 +36,7 @@ export default function OderActive({ navigation }: any) {
             console.log(err);
         }
     }
+
     useEffect(() => {
         getAllOder()
     }, [data])
@@ -78,7 +79,8 @@ export default function OderActive({ navigation }: any) {
 
                         <FlatList
                             data={item.cart}
-                            renderItem={renderItem} />
+                            renderItem={renderItem} 
+                            keyExtractor={index => index.id}/>
 
                         <View style={{ height: 1, backgroundColor: '#5d5d5d' }}></View>
 
@@ -105,7 +107,8 @@ export default function OderActive({ navigation }: any) {
             <FlatList
                 data={data}
                 renderItem={vertiRender}
-                style={{ marginTop: 20 }} />
+                style={{ marginTop: 20 }}
+                keyExtractor={ index => index.id} />
         </View>
     )
 }

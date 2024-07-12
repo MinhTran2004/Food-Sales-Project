@@ -20,19 +20,18 @@ export default function OderCancelled({ navigation }: any) {
     const getAllOderCancel = async () => {
         try {
             const reponse = await OderController.getAllOderCancel(user.id, user.chucvu)
-            if(reponse){
+            if (reponse) {
                 setData(reponse)
-            }else{
+            } else {
                 console.log("Oder cancel null data");
             }
         } catch (err) {
-            console.log(err + "123");
+            console.log(err);
         }
     }
-
     useEffect(() => {
         getAllOderCancel();
-    }, [1,data])
+    }, [1, data])
 
     const renderItem = ({ item }: any) => {
         return (
@@ -70,7 +69,8 @@ export default function OderCancelled({ navigation }: any) {
             <View>
                 <FlatList
                     data={item.cart}
-                    renderItem={renderItem} />
+                    renderItem={renderItem}
+                    keyExtractor={item => item.id} />
             </View>
         )
     }
@@ -80,7 +80,8 @@ export default function OderCancelled({ navigation }: any) {
             <FlatList
                 data={data}
                 renderItem={vertiRender}
-                style={{ marginTop: 20 }} />
+                style={{ marginTop: 20 }}
+                keyExtractor={item => item.id} />
 
         </View>
     )
