@@ -1,9 +1,10 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { OderController } from "../Controller/OderController";
 import axiosRetry from "axios-retry";
 import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 
 axiosRetry(axios, {
     retries: 3,
@@ -37,9 +38,11 @@ export default function OderActive({ navigation }: any) {
         }
     }
 
-    useEffect(() => {
-        getAllOder()
-    }, [data])
+    useFocusEffect(
+        React.useCallback(() => {
+          getAllOder();
+        }, [])
+      );
 
     const renderItem = ({ item }: any) => {
         return (

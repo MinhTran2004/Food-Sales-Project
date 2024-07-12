@@ -1,9 +1,10 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { OderController } from "../Controller/OderController";
 import { useSelector } from "react-redux";
+import { useFocusEffect } from "@react-navigation/native";
 
 axiosRetry(axios, {
     retries: 3,
@@ -29,14 +30,16 @@ export default function OderCancelled({ navigation }: any) {
             console.log(err);
         }
     }
-    useEffect(() => {
-        getAllOderCancel();
-    }, [1, data])
+    useFocusEffect(
+        React.useCallback(() => {
+          getAllOderCancel();
+        }, [])
+      );
 
     const renderItem = ({ item }: any) => {
         return (
             <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product')}>
-                <View style={{ flex: 1, marginBottom: 20 }}>
+                <View style={{ flex: 1, marginBottom: 5 }}>
                     <View style={[style.container, { flexDirection: 'row', justifyContent: 'space-between', backgroundColor: '#1f222a' }]}>
 
                         <View style={{ flexDirection: 'row' }}>
@@ -80,7 +83,6 @@ export default function OderCancelled({ navigation }: any) {
             <FlatList
                 data={data}
                 renderItem={vertiRender}
-                style={{ marginTop: 20 }}
                 keyExtractor={item => item.id} />
 
         </View>
