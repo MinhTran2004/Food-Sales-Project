@@ -1,6 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { TypeProduct } from "../Model/ProductModel";
 import { ProductController } from "../Controller/ProductController";
 import axiosRetry from "axios-retry";
@@ -15,6 +15,7 @@ axiosRetry(axios, {
 export default function Home({ navigation }: any) {
     const [data, setData] = useState<TypeProduct[]>([]);
     const [theloai, setTheLoai] = useState<TypeProduct[]>([]);
+    const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<any>("");
 
     const users = useSelector((state: any) => state.user.users[0]);
@@ -30,6 +31,8 @@ export default function Home({ navigation }: any) {
             setTheLoai(reponse)
         } catch (err) {
             console.log(err);
+        } finally {
+            setLoading(false);
         }
     }
     //lấy tất cả sản phẩm theo thể loại
@@ -120,115 +123,126 @@ export default function Home({ navigation }: any) {
     }
 
     return (
-        <ScrollView>
-            <View style={{ flex: 1, backgroundColor: '#1d1d21', padding: 10 }}>
+        <View style= {{flex: 1}}>
+            {loading ?
+                (<View style={{ flex: 1, backgroundColor: '#1d1d21', alignItems: 'center', justifyContent: "center" }} >
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View >)
+                :
+                (
+                    <ScrollView style={{ flex: 1 }}>
 
-                {/* header  */}
-                <View>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'row', marginTop: 10 }}>
-                            <Image source={require('../Image/man.png')} style={{ width: 50, height: 50 }} />
-                            <View style={{ justifyContent: 'space-between', marginLeft: 10 }}>
-                                {user ?
-                                    <View>
-                                        <Text style={[style.title, { color: 'white' }]}>{user.ten}</Text>
-                                        <Text style={{ fontSize: 16, color: 'white' }}>{user.chucvu}</Text>
+                        <View style={{ flex: 1, backgroundColor: '#1d1d21', padding: 10 }}>
+
+                            {/* header  */}
+                            <View>
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+                                    <View style={{ flexDirection: 'row', marginTop: 10 }}>
+                                        <Image source={require('../Image/man.png')} style={{ width: 50, height: 50 }} />
+                                        <View style={{ justifyContent: 'space-between', marginLeft: 10 }}>
+                                            {user ?
+                                                <View>
+                                                    <Text style={[style.title, { color: 'white' }]}>{user.ten}</Text>
+                                                    <Text style={{ fontSize: 16, color: 'white' }}>{user.chucvu}</Text>
+                                                </View>
+                                                :
+                                                <View></View>
+                                            }
+                                        </View>
                                     </View>
-                                    :
-                                    <View></View>
-                                }
+
+                                    <View style={{ flexDirection: 'row' }}>
+                                        <View style={[style.image_icon, { marginRight: 10 }]}>
+                                            <Image source={require("../Image/notification.png")} style={{ width: 20, height: 20, tintColor: 'white' }} />
+                                        </View>
+                                        <TouchableOpacity onPress={() => navigation.navigate("Cart")} style={style.image_icon} >
+                                            <Image source={require("../Image/cart.png")} style={{ width: 20, height: 20, tintColor: 'white' }} />
+                                        </TouchableOpacity>
+                                    </View>
+                                </View>
+
+                                <View style={style.layout_sreach}>
+                                    <Image source={require("../Image/sreach.png")} style={{ width: 20, height: 20, tintColor: 'white' }} />
+                                    <TextInput placeholder="Bạn đang cần tìm gì ?" placeholderTextColor={'white'} style={{ marginLeft: 10 }} />
+                                </View>
+
+                                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+                                    <Text style={[style.title, { color: 'white' }]}>Special Offer</Text>
+                                    <Text style={[style.title, { fontSize: 15, color: 'green' }]}>See All</Text>
+                                </View>
+                                <Image source={{ uri: 'https://img.freepik.com/premium-photo/tasty-grilled-homemade-burger-with-beef_73989-4636.jpg' }} style={style.image_header} />
                             </View>
-                        </View>
 
-                        <View style={{ flexDirection: 'row' }}>
-                            <View style={[style.image_icon, { marginRight: 10 }]}>
-                                <Image source={require("../Image/notification.png")} style={{ width: 20, height: 20, tintColor: 'white' }} />
+                            {/* main */}
+                            <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                                <View style={{ width: '25%', alignItems: 'center' }}>
+                                    <Image source={require("../Image/hamburger.png")} style={{ width: 50, height: 50 }} />
+                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Hambuger</Text>
+                                </View>
+                                <View style={{ width: '25%', alignItems: 'center' }}>
+                                    <Image source={require("../Image/pizza.png")} style={{ width: 50, height: 50 }} />
+                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Pizza</Text>
+                                </View>
+                                <View style={{ width: '25%', alignItems: 'center' }}>
+                                    <Image source={require("../Image/noodles.png")} style={{ width: 50, height: 50 }} />
+                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Noodles</Text>
+                                </View>
+                                <View style={{ width: '25%', alignItems: 'center' }}>
+                                    <Image source={require("../Image/meat.png")} style={{ width: 50, height: 50 }} />
+                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Meat</Text>
+                                </View>
                             </View>
-                            <TouchableOpacity onPress={() => navigation.navigate("Cart")} style={style.image_icon} >
-                                <Image source={require("../Image/cart.png")} style={{ width: 20, height: 20, tintColor: 'white' }} />
-                            </TouchableOpacity>
+                            <View style={{ flexDirection: 'row', marginTop: 20 }}>
+                                <View style={{ width: '25%', alignItems: 'center' }}>
+                                    <Image source={require("../Image/vegetable.png")} style={{ width: 50, height: 50 }} />
+                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Vegetable</Text>
+                                </View>
+                                <View style={{ width: '25%', alignItems: 'center' }}>
+                                    <Image source={require("../Image/cake.png")} style={{ width: 50, height: 50 }} />
+                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Dessert</Text>
+                                </View>
+                                <View style={{ width: '25%', alignItems: 'center' }}>
+                                    <Image source={require("../Image/drink.png")} style={{ width: 50, height: 50 }} />
+                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Drink</Text>
+                                </View>
+                                <View style={{ width: '25%', alignItems: 'center' }}>
+                                    <Image source={require("../Image/more.png")} style={{ width: 50, height: 50 }} />
+                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>More</Text>
+                                </View>
+                            </View>
+
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
+                                <Text style={[style.title, { color: 'white' }]}>Discount guaranteed!</Text>
+                                <Text style={[style.title, { fontSize: 15, color: 'green' }]}>See All</Text>
+                            </View>
+
+                            <FlatList
+                                scrollEnabled={true}
+                                data={data}
+                                horizontal={true}
+                                renderItem={horiRender} />
+
+                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 30 }}>
+                                <Text style={[style.title, { color: 'white' }]}>Recommended For You</Text>
+                                <Text style={[style.title, { fontSize: 15, color: 'green' }]}>See All</Text>
+                            </View>
+
+                            <FlatList
+                                data={data_category}
+                                renderItem={renderCategory}
+                                horizontal={true}
+                                style={{ marginTop: 30, marginBottom: 30 }}
+                                showsHorizontalScrollIndicator={false}
+                            />
+                            <FlatList
+                                scrollEnabled={false}
+                                data={theloai}
+                                renderItem={vertiRender} />
                         </View>
-                    </View>
-
-                    <View style={style.layout_sreach}>
-                        <Image source={require("../Image/sreach.png")} style={{ width: 20, height: 20, tintColor: 'white' }} />
-                        <TextInput placeholder="Bạn đang cần tìm gì ?" placeholderTextColor={'white'} style={{ marginLeft: 10 }} />
-                    </View>
-
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-                        <Text style={[style.title, { color: 'white' }]}>Special Offer</Text>
-                        <Text style={[style.title, { fontSize: 15, color: 'green' }]}>See All</Text>
-                    </View>
-                    <Image source={{ uri: 'https://img.freepik.com/premium-photo/tasty-grilled-homemade-burger-with-beef_73989-4636.jpg' }} style={style.image_header} />
-                </View>
-
-                {/* main */}
-                <View style={{ flexDirection: 'row', marginTop: 20 }}>
-                    <View style={{ width: '25%', alignItems: 'center' }}>
-                        <Image source={require("../Image/hamburger.png")} style={{ width: 50, height: 50 }} />
-                        <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Hambuger</Text>
-                    </View>
-                    <View style={{ width: '25%', alignItems: 'center' }}>
-                        <Image source={require("../Image/pizza.png")} style={{ width: 50, height: 50 }} />
-                        <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Pizza</Text>
-                    </View>
-                    <View style={{ width: '25%', alignItems: 'center' }}>
-                        <Image source={require("../Image/noodles.png")} style={{ width: 50, height: 50 }} />
-                        <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Noodles</Text>
-                    </View>
-                    <View style={{ width: '25%', alignItems: 'center' }}>
-                        <Image source={require("../Image/meat.png")} style={{ width: 50, height: 50 }} />
-                        <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Meat</Text>
-                    </View>
-                </View>
-                <View style={{ flexDirection: 'row', marginTop: 20 }}>
-                    <View style={{ width: '25%', alignItems: 'center' }}>
-                        <Image source={require("../Image/vegetable.png")} style={{ width: 50, height: 50 }} />
-                        <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Vegetable</Text>
-                    </View>
-                    <View style={{ width: '25%', alignItems: 'center' }}>
-                        <Image source={require("../Image/cake.png")} style={{ width: 50, height: 50 }} />
-                        <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Dessert</Text>
-                    </View>
-                    <View style={{ width: '25%', alignItems: 'center' }}>
-                        <Image source={require("../Image/drink.png")} style={{ width: 50, height: 50 }} />
-                        <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Drink</Text>
-                    </View>
-                    <View style={{ width: '25%', alignItems: 'center' }}>
-                        <Image source={require("../Image/more.png")} style={{ width: 50, height: 50 }} />
-                        <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>More</Text>
-                    </View>
-                </View>
-
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
-                    <Text style={[style.title, { color: 'white' }]}>Discount guaranteed!</Text>
-                    <Text style={[style.title, { fontSize: 15, color: 'green' }]}>See All</Text>
-                </View>
-
-                <FlatList
-                    scrollEnabled={true}
-                    data={data}
-                    horizontal={true}
-                    renderItem={horiRender} />
-
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 30 }}>
-                    <Text style={[style.title, { color: 'white' }]}>Recommended For You</Text>
-                    <Text style={[style.title, { fontSize: 15, color: 'green' }]}>See All</Text>
-                </View>
-
-                <FlatList
-                    data={data_category}
-                    renderItem={renderCategory}
-                    horizontal={true}
-                    style={{ marginTop: 30, marginBottom: 30 }}
-                    showsHorizontalScrollIndicator={false}
-                />
-                <FlatList
-                    scrollEnabled={false}
-                    data={theloai}
-                    renderItem={vertiRender} />
-            </View>
-        </ScrollView>
+                    </ScrollView>
+                )
+            }
+        </View>
     )
 }
 

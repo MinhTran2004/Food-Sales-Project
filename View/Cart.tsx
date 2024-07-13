@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, FlatList, ScrollView, ActivityIndicator } from 'react-native';
 import { CartController } from '../Controller/CartController';
 import axiosRetry from 'axios-retry';
 import { useSelector } from 'react-redux';
@@ -14,40 +14,43 @@ axiosRetry(axios, {
 export default function Cart({ navigation }: any) {
     const [data, setData] = useState<any>([]);
     const [tongTien, setTongTien] = useState<any>("");
+    const [loading, setLoading] = useState(true);
 
     const user = useSelector((state: any) => state.user.users[0]);
 
     //lay tat ca san pham
-    const getAllCart = async ()=>{
-        try{
+    const getAllCart = async () => {
+        try {
             const reponse = await CartController.getAllCart(user.id, user.chucvu)
             setData(reponse)
-        }catch(err){
+        } catch (err) {
             console.log(err);
+        } finally {
+            setLoading(false);
         }
     }
     //xoa san pham theo id
-    const deleteCartByid = async (id:any, makh:any, chucvu:any) => {
-        try{
+    const deleteCartByid = async (id: any, makh: any, chucvu: any) => {
+        try {
             await CartController.deleteCartByid(id, makh, chucvu)
-        }catch(err){
+        } catch (err) {
             console.log(err);
         }
     }
     //udpate so luong
-    const updateSoluong = async (id:any, soluong:any, trangthai:any, makh:any, chucvu:any) => {
-        try{
+    const updateSoluong = async (id: any, soluong: any, trangthai: any, makh: any, chucvu: any) => {
+        try {
             await CartController.updateSoluong(id, soluong, trangthai, makh, chucvu)
-        }catch(err){
+        } catch (err) {
             console.log(err);
         }
     }
     //update tong tien
-    const updateTongTien = async (data:any) => {
-        try{
+    const updateTongTien = async (data: any) => {
+        try {
             const reponse = await CartController.updateTongTien(data)
             setTongTien(reponse)
-        }catch(err){
+        } catch (err) {
             console.log(err);
         }
     }
@@ -73,11 +76,11 @@ export default function Cart({ navigation }: any) {
 
                     <View style={{ alignSelf: 'flex-end' }}>
                         <View style={{ alignItems: 'center', flexDirection: 'row', marginLeft: 30 }}>
-                            <TouchableOpacity style={{ padding: 1 }} onPress={() => updateSoluong( item.id, item.soluong, false, user.makh, user.chucvu ) }>
+                            <TouchableOpacity style={{ padding: 1 }} onPress={() => updateSoluong(item.id, item.soluong, false, user.makh, user.chucvu)}>
                                 <Image source={require('../Image/minus.png')} style={{ width: 15, height: 15 }} />
                             </TouchableOpacity>
                             <Text style={{ fontSize: 20, marginLeft: 10, marginRight: 10, fontWeight: 'bold', color: 'white' }}>{item.soluong}</Text>
-                            <TouchableOpacity style={{ padding: 1 }} onPress={() =>  updateSoluong( item.id, item.soluong, true, user.makh, user.chucvu )}>
+                            <TouchableOpacity style={{ padding: 1 }} onPress={() => updateSoluong(item.id, item.soluong, true, user.makh, user.chucvu)}>
                                 <Image source={require('../Image/plus.png')} style={{ width: 15, height: 15 }} />
                             </TouchableOpacity>
                         </View>
@@ -91,35 +94,44 @@ export default function Cart({ navigation }: any) {
         )
     }
     return (
-        <View style={{ flex: 1, backgroundColor: '#1d1d21' }}>
-            <ScrollView>
-                <View style={{ flex: 1, padding: 5 }}>
+        <View style={{ flex: 1 }}>
+            {loading ?
+                (<View style={{ flex: 1, backgroundColor: '#1d1d21', alignItems: 'center', justifyContent: "center" }} >
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View >)
+                :
+                (<View style={{ flex: 1, backgroundColor: '#1d1d21' }}>
+                    <ScrollView>
+                        <View style={{ flex: 1, padding: 5 }}>
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <TouchableOpacity onPress={() => { navigation.navigate("Home"), { data: { data } } }} style={{ marginTop: 10, marginLeft: 10, marginBottom: 10 }}>
-                            <Image source={require("../Image/return.png")} style={{ height: 25, width: 25, tintColor: 'white' }} />
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <TouchableOpacity onPress={() => { navigation.navigate("Home"), { data: { data } } }} style={{ marginTop: 10, marginLeft: 10, marginBottom: 10 }}>
+                                    <Image source={require("../Image/return.png")} style={{ height: 25, width: 25, tintColor: 'white' }} />
+                                </TouchableOpacity>
+                                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 25, marginLeft: 20 }}>Cart</Text>
+                            </View>
+
+                            <FlatList
+                                data={data}
+                                renderItem={renderItem}
+                                scrollEnabled={false} />
+                        </View>
+                    </ScrollView>
+
+                    <View style={{ padding: 10, backgroundColor: '#1f222a' }}>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20 }}>
+                            <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>Tổng tiền: </Text>
+                            <Text style={{ fontSize: 20, color: 'white' }}>{tongTien}</Text>
+                        </View>
+                        <TouchableOpacity onPress={() => { navigation.navigate("CheckOder") }} style={{ backgroundColor: 'green', padding: 10 }}>
+                            <Text style={{ textAlign: 'center', color: 'white' }}>Mua Hàng</Text>
                         </TouchableOpacity>
-                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 25, marginLeft: 20 }}>Cart</Text>
                     </View>
+                </View>)
 
-                    <FlatList
-                        data={data}
-                        renderItem={renderItem}
-                        scrollEnabled={false} />
-                </View>
-            </ScrollView>
-
-            <View style={{ padding: 10, backgroundColor: '#1f222a' }}>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingBottom: 20 }}>
-                    <Text style={{ fontSize: 20, fontWeight: 'bold', color: 'white' }}>Tổng tiền: </Text>
-                    <Text style={{ fontSize: 20, color: 'white' }}>{tongTien}</Text>
-                </View>
-                <TouchableOpacity onPress={() => { navigation.navigate("CheckOder") }} style={{ backgroundColor: 'green', padding: 10 }}>
-                    <Text style={{ textAlign: 'center', color: 'white' }}>Mua Hàng</Text>
-                </TouchableOpacity>
-            </View>
-
+            }
         </View>
+
 
     )
 }

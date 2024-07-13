@@ -1,7 +1,7 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
 import React, { useEffect, useState } from "react";
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { OderController } from "../Controller/OderController";
 import { useSelector } from "react-redux";
 import { useFocusEffect } from "@react-navigation/native";
@@ -14,6 +14,7 @@ axiosRetry(axios, {
 
 export default function OderCancelled({ navigation }: any) {
     const [data, setData] = useState<any>([]);
+    const [loading, setLoading] = useState(true);
 
     const user = useSelector((state: any) => state.user.users[0]);
 
@@ -28,13 +29,15 @@ export default function OderCancelled({ navigation }: any) {
             }
         } catch (err) {
             console.log(err);
+        } finally {
+            setLoading(false);
         }
     }
     useFocusEffect(
         React.useCallback(() => {
-          getAllOderCancel();
+            getAllOderCancel();
         }, [])
-      );
+    );
 
     const renderItem = ({ item }: any) => {
         return (
@@ -79,13 +82,21 @@ export default function OderCancelled({ navigation }: any) {
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#181a20', padding: 10 }}>
-            <FlatList
-                data={data}
-                renderItem={vertiRender}
-                keyExtractor={item => item.id} />
-
+        <View style={{ flex: 1, backgroundColor: '#1d1d21' }}>
+            {loading ?
+                (<View style={{ flex: 1, backgroundColor: '#1d1d21', alignItems: 'center', justifyContent: "center" }} >
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View >)
+                :
+                (<View style={{ flex: 1, backgroundColor: '#181a20', padding: 10 }}>
+                    <FlatList
+                        data={data}
+                        renderItem={vertiRender}
+                        keyExtractor={item => item.id} />
+                </View>)
+            }
         </View>
+
     )
 }
 

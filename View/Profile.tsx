@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, Image, Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { UserModel } from "../Model/UserModel";
 import { useDispatch, useSelector } from "react-redux";
 import { userController } from "../Controller/UserController";
@@ -18,6 +18,7 @@ export default function Profile({ navigation }: any) {
     const [errorSdt, setErrorSdt] = useState("")
     const [errorDiachi, setErrorDiachi] = useState("")
     const [data, setData] = useState<any>("")
+    const [loading, setLoading] = useState(true);
 
     const user = useSelector((state: any) => state.user.users[0]);
 
@@ -33,6 +34,8 @@ export default function Profile({ navigation }: any) {
             setDiachi(reponse.diachi)
         } catch (err) {
             console.log(err);
+        } finally {
+            setLoading(false);
         }
     }
     const setUser2 = (user: any) => {
@@ -153,45 +156,54 @@ export default function Profile({ navigation }: any) {
     }, [1])
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#1f222a', padding: 10 }}>
+        <View style={{ flex: 1 }}>
+            {loading ?
+                (<View style={{ flex: 1, backgroundColor: '#1d1d21', alignItems: 'center', justifyContent: "center" }} >
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View >)
+                :
+                (<View style={{ flex: 1, backgroundColor: '#1f222a', padding: 10 }}>
 
-            <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
-                <TouchableOpacity onPress={() => { navigation.goBack() }} style={{ marginTop: 10, marginBottom: 10 }}>
-                    <Image source={require("../Image/return.png")} style={{ height: 23, width: 23, tintColor: 'white' }} />
-                </TouchableOpacity>
-                <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 23, marginLeft: 20, textAlign: 'center' }}>Thông tin người dùng</Text>
-            </View>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', width: '100%' }}>
+                        <TouchableOpacity onPress={() => { navigation.goBack() }} style={{ marginTop: 10, marginBottom: 10 }}>
+                            <Image source={require("../Image/return.png")} style={{ height: 23, width: 23, tintColor: 'white' }} />
+                        </TouchableOpacity>
+                        <Text style={{ color: 'white', fontWeight: 'bold', fontSize: 23, marginLeft: 20, textAlign: 'center' }}>Thông tin người dùng</Text>
+                    </View>
 
-            <Image source={require("../Image/man.png")} style={{ width: 150, height: 150, alignSelf: 'center', marginTop: 30 }} />
+                    <Image source={require("../Image/man.png")} style={{ width: 150, height: 150, alignSelf: 'center', marginTop: 30 }} />
 
-            <View style={{ marginTop: 60 }}>
-                <View style={style.layoutText}>
-                    <Text style={style.text}>Họ và tên</Text>
-                    <Text style={style.text}>{ten}</Text>
-                </View>
-                <View style={style.layoutText}>
-                    <Text style={style.text}>Tài khoản</Text>
-                    <Text style={style.text}>{taikhoan}</Text>
-                </View>
-                <View style={style.layoutText}>
-                    <Text style={style.text}>Mật khẩu</Text>
-                    <Text style={style.text}>{matkhau}</Text>
-                </View>
-                <View style={style.layoutText}>
-                    <Text style={{ color: 'white', fontSize: 20 }}>Số điện thoại</Text>
-                    <Text style={style.text}>{sdt}</Text>
-                </View>
-                <View style={style.layoutText}>
-                    <Text style={style.text}>Địa chỉ</Text>
-                    <Text style={style.text}>{diachi}</Text>
-                </View>
-            </View>
+                    <View style={{ marginTop: 60 }}>
+                        <View style={style.layoutText}>
+                            <Text style={style.text}>Họ và tên</Text>
+                            <Text style={style.text}>{ten}</Text>
+                        </View>
+                        <View style={style.layoutText}>
+                            <Text style={style.text}>Tài khoản</Text>
+                            <Text style={style.text}>{taikhoan}</Text>
+                        </View>
+                        <View style={style.layoutText}>
+                            <Text style={style.text}>Mật khẩu</Text>
+                            <Text style={style.text}>{matkhau}</Text>
+                        </View>
+                        <View style={style.layoutText}>
+                            <Text style={{ color: 'white', fontSize: 20 }}>Số điện thoại</Text>
+                            <Text style={style.text}>{sdt}</Text>
+                        </View>
+                        <View style={style.layoutText}>
+                            <Text style={style.text}>Địa chỉ</Text>
+                            <Text style={style.text}>{diachi}</Text>
+                        </View>
+                    </View>
 
-            <TouchableOpacity style={{ marginTop: 20, alignItems: 'center' }} onPress={() => { setIsVisible(!isVisible) }}>
-                <Text style={style.button}>Chỉnh sửa</Text>
-            </TouchableOpacity>
-            {dialogUdpateUser()}
+                    <TouchableOpacity style={{ marginTop: 20, alignItems: 'center' }} onPress={() => { setIsVisible(!isVisible) }}>
+                        <Text style={style.button}>Chỉnh sửa</Text>
+                    </TouchableOpacity>
+                    {dialogUdpateUser()}
+                </View>)
+            }
         </View>
+
     )
 }
 

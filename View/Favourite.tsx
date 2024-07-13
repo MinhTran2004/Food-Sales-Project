@@ -1,11 +1,12 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { FavouriteController } from "../Controller/FavouriteController";
 import { useSelector } from "react-redux";
 
 export default function Favourite({ navigation }: any) {
     const [data, setData] = useState<any>([]);
+    const [loading, setLoading] = useState(true);
 
     const users = useSelector((state: any) => state.user.users[0].id);
 
@@ -23,6 +24,8 @@ export default function Favourite({ navigation }: any) {
             setData(reponse)
         } catch (err) {
             console.log(err + "123");
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -62,26 +65,31 @@ export default function Favourite({ navigation }: any) {
     }
 
     return (
-        <View style={{ flex: 1, backgroundColor: '#1d1d21', padding: 10 }}>
-            <View>
-                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
+        <View style={{ flex: 1 }}>
+            {loading ?
+                (<View style={{ flex: 1, backgroundColor: '#1d1d21', alignItems: 'center', justifyContent: "center" }} >
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View >)
+                :
+                (<View style={{ flex: 1, backgroundColor: '#1d1d21', padding: 10 }}>
+                    <View>
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
 
-                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <TouchableOpacity onPress={() => navigation.goBack()}>
-                            <Image source={require("../Image/return.png")} style={{ height: 25, width: 25, tintColor: 'white' }} />
-                        </TouchableOpacity>
-                        <Text style={{ color: 'white', fontSize: 23, fontWeight: 'bold', marginLeft: 10 }}>My Favourite Restaurants</Text>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <TouchableOpacity onPress={() => navigation.goBack()}>
+                                    <Image source={require("../Image/return.png")} style={{ height: 25, width: 25, tintColor: 'white' }} />
+                                </TouchableOpacity>
+                                <Text style={{ color: 'white', fontSize: 23, fontWeight: 'bold', marginLeft: 10 }}>My Favourite Restaurants</Text>
+                            </View>
+                        </View>
+
+                        <FlatList
+                            data={data}
+                            renderItem={vertiRender}
+                            showsVerticalScrollIndicator={false} />
                     </View>
-
-                    {/* <Image source={require("../Image/sreach.png")} style={{ width: 20, height: 20, tintColor: 'white' }} /> */}
-
-                </View>
-
-                <FlatList
-                    data={data}
-                    renderItem={vertiRender}
-                    showsVerticalScrollIndicator={false} />
-            </View>
+                </View>)
+            }
         </View>
     )
 }

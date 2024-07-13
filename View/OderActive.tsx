@@ -1,6 +1,6 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
+import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { OderController } from "../Controller/OderController";
 import axiosRetry from "axios-retry";
 import { useSelector } from "react-redux";
@@ -14,19 +14,22 @@ axiosRetry(axios, {
 
 export default function OderActive({ navigation }: any) {
     const [data, setData] = useState<any>([]);
+    const [loading, setLoading] = useState(true);
 
     const user = useSelector((state: any) => state.user.users[0]);
 
     const getAllOder = async () => {
         try {
             const reponse = await OderController.getAllOderActive(user.id, user.chucvu)
-            if ( reponse ){
+            if (reponse) {
                 setData(reponse)
-            }else{
+            } else {
                 console.log("OderActive null data");
             }
         } catch (err) {
             console.log(err);
+        } finally {
+            setLoading(false);
         }
     }
     const updateStatusOder = async (id: any, status: any, makh: any) => {
@@ -40,9 +43,9 @@ export default function OderActive({ navigation }: any) {
 
     useFocusEffect(
         React.useCallback(() => {
-          getAllOder();
+            getAllOder();
         }, [])
-      );
+    );
 
     const renderItem = ({ item }: any) => {
         return (
@@ -82,8 +85,8 @@ export default function OderActive({ navigation }: any) {
 
                         <FlatList
                             data={item.cart}
-                            renderItem={renderItem} 
-                            keyExtractor={index => index.id}/>
+                            renderItem={renderItem}
+                            keyExtractor={index => index.id} />
 
                         <View style={{ height: 1, backgroundColor: '#5d5d5d' }}></View>
 
@@ -106,13 +109,22 @@ export default function OderActive({ navigation }: any) {
         )
     }
     return (
-        <View style={{ flex: 1, backgroundColor: '#181a20', padding: 10 }}>
-            <FlatList
-                data={data}
-                renderItem={vertiRender}
-                style={{ marginTop: 20 }}
-                keyExtractor={ index => index.id} />
+        <View style={{ flex: 1 }}>
+            {loading ?
+                (<View style={{ flex: 1, backgroundColor: '#1d1d21', alignItems: 'center', justifyContent: "center" }} >
+                    <ActivityIndicator size="large" color="#0000ff" />
+                </View >)
+                :
+                (<View style={{ flex: 1, backgroundColor: '#181a20', padding: 10 }}>
+                    <FlatList
+                        data={data}
+                        renderItem={vertiRender}
+                        style={{ marginTop: 20 }}
+                        keyExtractor={index => index.id} />
+                </View>)
+            }
         </View>
+
     )
 }
 
