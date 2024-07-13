@@ -72,7 +72,7 @@ export default function OderCancelled({ navigation }: any) {
 
     const vertiRender = ({ item }: any) => {
         return (
-            <View>
+            <View style = {{marginBottom: 10}}>
                 <FlatList
                     data={item.cart}
                     renderItem={renderItem}
