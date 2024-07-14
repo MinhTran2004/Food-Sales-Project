@@ -123,7 +123,7 @@ export default function Home({ navigation }: any) {
     }
 
     return (
-        <View style= {{flex: 1}}>
+        <View style= {{flex: 1, backgroundColor: '#1d1d21'}}>
             {loading ?
                 (<View style={{ flex: 1, backgroundColor: '#1d1d21', alignItems: 'center', justifyContent: "center" }} >
                     <ActivityIndicator size="large" color="#0000ff" />
