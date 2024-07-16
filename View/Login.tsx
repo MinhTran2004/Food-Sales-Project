@@ -88,7 +88,7 @@ export default function Login({ navigation }: any) {
                     :
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Image source={require('../Image/lock.png')} style={style.icon_input} />
+                            <Image source={require('../Image/lock.png')} style={style.icon_input}/>
                             <TextInput style={style.input} placeholder="Password" placeholderTextColor={"white"} secureTextEntry={true} onChangeText={text => setMatKhau(text)} />
                         </View>
                         <TouchableOpacity onPress={() => { setHidePassword(!hidePassword) }}>
