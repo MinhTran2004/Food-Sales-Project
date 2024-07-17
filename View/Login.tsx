@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { userController } from "../Controller/UserController";
 import { useDispatch } from "react-redux";
-import { setUser } from "../Redux/Reducer/userSlice";
+import { setUser } from "../Redux/userSlice";
+import { userController } from "../Controller/UserController";
+import { ProductController } from "../Controller/ProductController";
+import { Screen } from "react-native-screens";
 
 export default function Login({ navigation }: any) {
     const [taikhoan, setTaiKhoan] = useState("minh2004@gmail.com")
@@ -10,6 +12,8 @@ export default function Login({ navigation }: any) {
     const [errorTaikhoan, setErrorTaiKhoan] = useState("")
     const [errorMatkhau, setErrorMatKhau] = useState("")
     const [hidePassword, setHidePassword] = useState(true);
+    const [data, setData] = useState<any>();
+    const [loading, setLoading] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -41,13 +45,29 @@ export default function Login({ navigation }: any) {
         return check
     }
 
+    //lấy tất cả sản phẩm
+    const getAllProduct = async () => {
+        try {
+            const reponse = await ProductController.getAllProduct()
+            if (reponse != null) {
+                setData(reponse);
+                setLoading(true);
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
     const checkLogin = async () => {
         if (checkNullData()) {
             try {
                 const check = await userController.checkUserLogin(taikhoan, matkhau);
                 if (check) {
-                    navigation.navigate('Main')
-                    setData(check)
+                    await getAllProduct();
+                    if (loading) {
+                        navigation.navigate('Main', {screen:'Home', params : data})
+                        dispatch(setUser(check))
+                    }
                 } else {
                     setErrorMatKhau("Sai mật khẩu")
                 }
@@ -57,9 +77,13 @@ export default function Login({ navigation }: any) {
         }
     }
 
-    const setData = (check: any) => {
+    const updateUser = (check: any) => {
         dispatch(setUser(check))
     }
+
+    useEffect(() => {
+        getAllProduct();
+    }, []);
 
     return (
         <View style={{ flex: 1, backgroundColor: '#181a20', padding: 10 }}>
@@ -78,7 +102,7 @@ export default function Login({ navigation }: any) {
                 {hidePassword ?
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Image source={require('../Image/lock.png')} style={style.icon_input} />
+                            <Image source={require('../Image/lock.png')} style={style.icon_input}/>
                             <TextInput style={style.input} placeholder="Password" placeholderTextColor={"white"} onChangeText={text => setMatKhau(text)} />
                         </View>
                         <TouchableOpacity onPress={() => { setHidePassword(!hidePassword) }}>

@@ -1,6 +1,6 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
-import { CartModel, TypeCart } from "../Model/CartModel";
+import { CartService } from "../Services/CartService";
 
 axiosRetry(axios, {
     retries: 3,
@@ -12,7 +12,7 @@ export class CartController {
     // lấy tất cả sản phẩm trong cart
     static async getAllCart(makh:any, chucvu:any) {
         try {
-            return await CartModel.getAllCart(makh, chucvu)
+            return await CartService.getAllCart(makh, chucvu)
         } catch (err) {
             return []
         }
@@ -20,7 +20,7 @@ export class CartController {
     // lấy tất cả sản phẩm trong cart theo id
     static async getCartById(id: String){
         try{
-            return await CartModel.getCartById(id)
+            return await CartService.getCartById(id)
         }catch(err){
             throw err
         }
@@ -28,7 +28,7 @@ export class CartController {
     // thêm sản phẩm
     static async addNewCart(data: any, makh:any) {
         try {
-            await CartModel.addNewCart(data, makh)
+            await CartService.addNewCart(data, makh)
         } catch (err) {
             throw err
         }
@@ -36,7 +36,7 @@ export class CartController {
     // xóa sản phẩm theo id
     static async deleteCartByid(id: any, makh:any, chucvu:any) {
         try {
-            await CartModel.deleteCartByid(id)
+            await CartService.deleteCartByid(id)
             await CartController.getAllCart(makh, chucvu)
         } catch (err) {
             throw err
@@ -45,7 +45,7 @@ export class CartController {
     // xóa sản phẩm theo id
     static async updateStatusCartByid(id: any) {
         try {
-            await CartModel.updateStatusCartByid(id)
+            await CartService.updateStatusCartByid(id)
         } catch (err) {
             throw err
         }
@@ -57,7 +57,7 @@ export class CartController {
                 await CartController.deleteCartByid(id, makh, chucvu)
                 return await CartController.getAllCart( makh, chucvu )
             } else {
-                await CartModel.updateSoluong(id, soluong, trangthai)
+                await CartService.updateSoluong(id, soluong, trangthai)
                 return await CartController.getAllCart( makh, chucvu )
             }
         } catch (err) {
@@ -67,7 +67,7 @@ export class CartController {
 
     static async updateTongTien(data: any) {
         try{
-            return await CartModel.updateTongTien(data)
+            return await CartService.updateTongTien(data)
         }catch(err){
             console.log(err);
         }

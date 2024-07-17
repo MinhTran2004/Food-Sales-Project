@@ -1,7 +1,6 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Image, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { TypeProduct } from "../Model/ProductModel";
 import { ProductController } from "../Controller/ProductController";
 import axiosRetry from "axios-retry";
 import { useSelector } from "react-redux";
@@ -12,9 +11,9 @@ axiosRetry(axios, {
     retryCondition: (error) => error.response?.status === 429 || axiosRetry.isNetworkOrIdempotentRequestError(error),
 });
 
-export default function Home({ navigation }: any) {
-    const [data, setData] = useState<TypeProduct[]>([]);
-    const [theloai, setTheLoai] = useState<TypeProduct[]>([]);
+export default function Home({ navigation, route }: any) {
+    const [data, setData] = useState<any[]>([]);
+    const [theloai, setTheLoai] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<any>("");
 
@@ -26,7 +25,8 @@ export default function Home({ navigation }: any) {
     //lấy tất cả sản phẩm
     const getAllProduct = async () => {
         try {
-            const reponse = await ProductController.getAllProduct()
+            const product = route.params;
+            const reponse = Object.values(product)
             setData(reponse)
             setTheLoai(reponse)
         } catch (err) {
@@ -48,7 +48,7 @@ export default function Home({ navigation }: any) {
     useEffect(() => {
         getAllProduct()
         getUser(users)
-    }, [user, data])
+    }, [users])
 
     const data_category = [
         { name: 'All' },

@@ -1,6 +1,7 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
 import { OderModel } from "../Model/OderModel";
+import { OderService } from "../Services/OderService";
 
 axiosRetry(axios, {
     retries: 3,
@@ -12,7 +13,7 @@ export class OderController {
     //add data Oder
     static async addNewOder(arrId: [], tongtien: any, trangthai: any, makh:any) {
         try {
-            await OderModel.addNewOrder(arrId, tongtien, trangthai, makh)
+            await OderService.addNewOrder(arrId, tongtien, trangthai, makh)
         } catch (err) {
             console.log(err);
         }
@@ -20,7 +21,7 @@ export class OderController {
     //lấy tất cả danh sách có trạng thái = "Active"
     static async getAllOderActive(makh:any, chucvu:any) {
         try {
-            return await OderModel.getAllOderActive(makh, chucvu)
+            return await OderService.getAllOderActive(makh, chucvu)
         } catch (err) {
             throw err
         }
@@ -28,7 +29,7 @@ export class OderController {
     //lấy tất cả danh sách có trạng thái = "Completed"
     static async getAllOderCompleted(makh:any, chucvu:any) {
         try {
-            return await OderModel.getAllOderCompleted(makh, chucvu)
+            return await OderService.getAllOderCompleted(makh, chucvu)
         } catch (err) {
             throw err
         }
@@ -36,7 +37,7 @@ export class OderController {
     //lấy tất cả danh sách có trạng thái = "Cancel"
     static async getAllOderCancel(makh:any, chucvu:any) {
         try {
-            return await OderModel.getAllOderCancel(makh, chucvu)
+            return await OderService.getAllOderCancel(makh, chucvu)
         } catch (err) {
             throw err
         }
@@ -44,7 +45,7 @@ export class OderController {
     // update trang thai khi xac nhan don hang
     static async updateStatusOder(id: any, status: any, makh:any, chucvu:any) {
         try {
-            await OderModel.updateStatusOder(id, status)
+            await OderService.updateStatusOder(id, status)
             return await OderController.getAllOderActive(makh, chucvu)
         } catch (err) {
             console.log(err);

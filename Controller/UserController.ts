@@ -1,6 +1,6 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
-import { UserModel } from "../Model/UserModel";
+import { UserService } from "../Services/UserService";
 
 axiosRetry(axios, {
     retries: 3,
@@ -12,7 +12,7 @@ export class userController {
     //kiem tra xem tai khoan co ton tai khong
     static async getUserByAccount(taikhoan: any){
         try{
-            return await UserModel.getUserByAccount(taikhoan)
+            return await UserService.getUserByAccount(taikhoan)
         }catch(err){
             console.log(err);
         }
@@ -20,7 +20,7 @@ export class userController {
     //get user by id
     static async getUserById(id: any){
         try{
-            return await UserModel.getUserById(id)
+            return await UserService.getUserById(id)
         }catch(err){
             console.log(err);
         }
@@ -28,7 +28,7 @@ export class userController {
     //kiem tra xem tai khoan co ton tai khong
     static async checkUserLogin(taikhoan: any, matkhau: any){
         try{
-            return UserModel.checkUserLogin(taikhoan, matkhau)
+            return UserService.checkUserLogin(taikhoan, matkhau)
         }catch(err){
             console.log(err);
         }
@@ -36,7 +36,7 @@ export class userController {
     //tao tai khoan
     static async addNewUser(data: any) {
         try {
-            await UserModel.addNewUser(data)
+            await UserService.addNewUser(data)
         } catch (err) {
             console.log(err);
         }
@@ -44,7 +44,7 @@ export class userController {
     //update tai khoa123
     static async updateUser(id: any, data: any) {
         try {
-           return await UserModel.updateUser(id, data)
+           return await UserService.updateUser(id, data)
         } catch (err) {
             console.log(err);
         }

@@ -1,6 +1,6 @@
 import axiosRetry from "axios-retry";
-import { ProductModel, TypeProduct } from "../Model/ProductModel";
 import axios from "axios";
+import { ProductService } from "../Services/ProductService";
 
 axiosRetry(axios, {
     retries: 3,
@@ -10,9 +10,9 @@ axiosRetry(axios, {
 
 export class ProductController {
     //lấy tất cả sản phẩm
-    static async getAllProduct(): Promise<TypeProduct[]> {
+    static async getAllProduct() {
         try {
-            return await ProductModel.getAllProduct();
+            return await ProductService.getAllProduct();
         } catch (err) {
             console.log("Controller: ", err);
             throw err
@@ -20,23 +20,23 @@ export class ProductController {
     }
     static async getSreachAllProduct(key: any) {
         try {
-            return await ProductModel.getSreachAllProduct(key)
+            return await ProductService.getSreachAllProduct(key)
         } catch (err) {
             console.log(err);
         }
     }
     //lấy tất cả sản phẩm theo id
-    static async getAllProductByid(id: any): Promise<ProductModel> {
+    static async getAllProductByid(id: any) {
         try {
-            return await ProductModel.getAllProductByid(id)
+            return await ProductService.getAllProductByid(id)
         } catch (err) {
             throw err
         }
     }
     //lấy sản phẩm theo thể loại
-    static async getCategoryProduct(theloai: any): Promise<TypeProduct[]> {
+    static async getCategoryProduct(theloai: any) {
         try {
-            return await ProductModel.getCategoryProduct(theloai);
+            return await ProductService.getCategoryProduct(theloai);
         } catch (err) {
             console.log("Controller: ", err);
             throw err;

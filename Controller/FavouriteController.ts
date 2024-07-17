@@ -1,8 +1,6 @@
-// https://66836c0c4102471fa4ca04b7.mockapi.io/api/Favourite
-
 import axios from "axios";
 import axiosRetry from "axios-retry";
-import { FavouriteModel } from "../Model/FavouriteModel";
+import { FavouriteService } from "../Services/FavouriteService";
 
 axiosRetry(axios, {
     retries: 3,
@@ -14,7 +12,7 @@ export class FavouriteController {
     // Lấy tất cả sản phẩm yêu thích theo makh
     static async getAllFavouriteByMakh(makh: any) {
         try {
-            return await FavouriteModel.getAllFavouriteByMakh(makh)
+            return await FavouriteService.getAllFavouriteByMakh(makh)
         } catch (err) {
             throw err
         }
@@ -22,7 +20,7 @@ export class FavouriteController {
     // udpate yeu thich san pham
     static async addNewFavourite(makh: any, masp: any) {
         try {
-            return await FavouriteModel.addNewFavourite(makh, masp)
+            return await FavouriteService.addNewFavourite(makh, masp)
         } catch (err) {
             throw err
         }
@@ -30,11 +28,9 @@ export class FavouriteController {
     // delete yeu thich san pham bang id
     static async deleteFavouriteById(masp: any, makh:any) {
         try{
-            return await FavouriteModel.deleteFavouriteById(masp, makh)
+            return await FavouriteService.deleteFavouriteById(masp, makh)
         }catch(err){
             console.log(err);
         }
     }
-
-
 }
