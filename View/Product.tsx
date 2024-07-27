@@ -16,7 +16,6 @@ axiosRetry(axios, {
 
 
 export default function Product({ navigation, route }: any) {
-    const [isFirstFocus, setIsFirstFocus] = useState(true);
     const [like, setLike] = useState(false)
     const { product } = route.params;
 

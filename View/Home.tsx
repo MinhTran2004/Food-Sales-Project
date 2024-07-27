@@ -13,14 +13,11 @@ axiosRetry(axios, {
 
 export default function Home({ navigation, route }: any) {
     const [data, setData] = useState<any[]>([]);
-    const [theloai, setTheLoai] = useState<any[]>([]);
+    const [dataCategory, setDataCategory] = useState<any[]>([]);
+    const [nameCategory, setnameCategory] = useState("");
     const [loading, setLoading] = useState(true);
-    const [user, setUser] = useState<any>("");
 
     const users = useSelector((state: any) => state.user.users[0]);
-    const getUser = (users: any) => {
-        setUser(users)
-    }
 
     //lấy tất cả sản phẩm
     const getAllProduct = async () => {
@@ -28,28 +25,40 @@ export default function Home({ navigation, route }: any) {
             const product = route.params;
             const reponse = Object.values(product)
             setData(reponse)
-            setTheLoai(reponse)
+            setDataCategory(reponse)
         } catch (err) {
             console.log(err);
         } finally {
             setLoading(false);
         }
     }
-    //lấy tất cả sản phẩm theo thể loại
-    const getCategoryProduct = async (theloai: any) => {
-        try {
-            const reponse = await ProductController.getCategoryProduct(theloai)
-            setTheLoai(reponse)
-        } catch (err) {
-            console.log(err);
+
+    const getProductCategory = (name: any) => {
+        setnameCategory(name);
+        if (name === "All") {
+            setDataCategory(data);
+        }else{
+            const arrProductCategory = data.filter(product => product.theloai === nameCategory);
+            setDataCategory(arrProductCategory);
         }
     }
 
     useEffect(() => {
         getAllProduct()
-        getUser(users)
     }, [users])
 
+    useEffect(() => {
+        getProductCategory(nameCategory)
+    }, [nameCategory])
+
+    const Product_item = ({ image, name }: any) => {
+        return (
+            <View style={{ width: '25%', alignItems: 'center' }}>
+                <Image source={image} style={{ width: 50, height: 50 }} />
+                <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>{name}</Text>
+            </View>
+        )
+    }
     const data_category = [
         { name: 'All' },
         { name: 'Hambuger' },
@@ -63,14 +72,13 @@ export default function Home({ navigation, route }: any) {
     ]
     const renderCategory = ({ item }: any) => {
         return (
-            <TouchableOpacity onPress={() => { item.name === "All" ? getAllProduct() : getCategoryProduct(item.name) }}>
+            <TouchableOpacity onPress={() => { getProductCategory(item.name) }}>
                 <View style={style.layout_hozi}>
                     <Text style={{ fontWeight: 'bold', color: 'white', textAlign: 'center' }}>{item.name}</Text>
                 </View>
             </TouchableOpacity>
         )
     }
-
     const horiRender = ({ item }: any) => {
         return (
             <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product', { product: item })}>
@@ -92,7 +100,6 @@ export default function Home({ navigation, route }: any) {
             </TouchableOpacity>
         )
     }
-
     const vertiRender = ({ item }: any) => {
         return (
             <TouchableOpacity style={{ flex: 1 }} onPress={() => navigation.navigate('Product', { product: item })}>
@@ -123,7 +130,7 @@ export default function Home({ navigation, route }: any) {
     }
 
     return (
-        <View style= {{flex: 1, backgroundColor: '#1d1d21'}}>
+        <View style={{ flex: 1, backgroundColor: '#1d1d21' }}>
             {loading ?
                 (<View style={{ flex: 1, backgroundColor: '#1d1d21', alignItems: 'center', justifyContent: "center" }} >
                     <ActivityIndicator size="large" color="#0000ff" />
@@ -131,23 +138,17 @@ export default function Home({ navigation, route }: any) {
                 :
                 (
                     <ScrollView style={{ flex: 1 }}>
-
                         <View style={{ flex: 1, backgroundColor: '#1d1d21', padding: 10 }}>
-
                             {/* header  */}
                             <View>
                                 <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                                     <View style={{ flexDirection: 'row', marginTop: 10 }}>
                                         <Image source={require('../Image/man.png')} style={{ width: 50, height: 50 }} />
                                         <View style={{ justifyContent: 'space-between', marginLeft: 10 }}>
-                                            {user ?
-                                                <View>
-                                                    <Text style={[style.title, { color: 'white' }]}>{user.ten}</Text>
-                                                    <Text style={{ fontSize: 16, color: 'white' }}>{user.chucvu}</Text>
-                                                </View>
-                                                :
-                                                <View></View>
-                                            }
+                                            <View>
+                                                <Text style={[style.title, { color: 'white' }]}>{users.ten}</Text>
+                                                <Text style={{ fontSize: 16, color: 'white' }}>{users.chucvu}</Text>
+                                            </View>
                                         </View>
                                     </View>
 
@@ -170,45 +171,21 @@ export default function Home({ navigation, route }: any) {
                                     <Text style={[style.title, { color: 'white' }]}>Special Offer</Text>
                                     <Text style={[style.title, { fontSize: 15, color: 'green' }]}>See All</Text>
                                 </View>
-                                <Image source={{ uri: 'https://img.freepik.com/premium-photo/tasty-grilled-homemade-burger-with-beef_73989-4636.jpg' }} style={style.image_header} />
+                                <Image source={require('../Image/img_product_home.png')} style={style.image_header} />
                             </View>
 
                             {/* main */}
                             <View style={{ flexDirection: 'row', marginTop: 20 }}>
-                                <View style={{ width: '25%', alignItems: 'center' }}>
-                                    <Image source={require("../Image/hamburger.png")} style={{ width: 50, height: 50 }} />
-                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Hambuger</Text>
-                                </View>
-                                <View style={{ width: '25%', alignItems: 'center' }}>
-                                    <Image source={require("../Image/pizza.png")} style={{ width: 50, height: 50 }} />
-                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Pizza</Text>
-                                </View>
-                                <View style={{ width: '25%', alignItems: 'center' }}>
-                                    <Image source={require("../Image/noodles.png")} style={{ width: 50, height: 50 }} />
-                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Noodles</Text>
-                                </View>
-                                <View style={{ width: '25%', alignItems: 'center' }}>
-                                    <Image source={require("../Image/meat.png")} style={{ width: 50, height: 50 }} />
-                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Meat</Text>
-                                </View>
+                                <Product_item image={require('../Image/hamburger.png')} name="Hambuger" />
+                                <Product_item image={require('../Image/pizza.png')} name="Pizza" />
+                                <Product_item image={require('../Image/noodles.png')} name="Noodles" />
+                                <Product_item image={require('../Image/meat.png')} name="More" />
                             </View>
                             <View style={{ flexDirection: 'row', marginTop: 20 }}>
-                                <View style={{ width: '25%', alignItems: 'center' }}>
-                                    <Image source={require("../Image/vegetable.png")} style={{ width: 50, height: 50 }} />
-                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Vegetable</Text>
-                                </View>
-                                <View style={{ width: '25%', alignItems: 'center' }}>
-                                    <Image source={require("../Image/cake.png")} style={{ width: 50, height: 50 }} />
-                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Dessert</Text>
-                                </View>
-                                <View style={{ width: '25%', alignItems: 'center' }}>
-                                    <Image source={require("../Image/drink.png")} style={{ width: 50, height: 50 }} />
-                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>Drink</Text>
-                                </View>
-                                <View style={{ width: '25%', alignItems: 'center' }}>
-                                    <Image source={require("../Image/more.png")} style={{ width: 50, height: 50 }} />
-                                    <Text style={{ fontWeight: 'bold', color: 'white', fontSize: 16 }}>More</Text>
-                                </View>
+                                <Product_item image={require('../Image/vegetable.png')} name="Vegetable" />
+                                <Product_item image={require('../Image/cake.png')} name="Dessert" />
+                                <Product_item image={require('../Image/drink.png')} name="Drink" />
+                                <Product_item image={require('../Image/more.png')} name="More" />
                             </View>
 
                             <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 30, marginBottom: 30 }}>
@@ -236,7 +213,7 @@ export default function Home({ navigation, route }: any) {
                             />
                             <FlatList
                                 scrollEnabled={false}
-                                data={theloai}
+                                data={dataCategory}
                                 renderItem={vertiRender} />
                         </View>
                     </ScrollView>

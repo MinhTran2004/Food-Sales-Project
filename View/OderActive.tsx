@@ -86,7 +86,7 @@ export default function OderActive({ navigation }: any) {
                         <FlatList
                             data={item.cart}
                             renderItem={renderItem}
-                            keyExtractor={index => index.id} />
+                            keyExtractor={item.cart.id} />
 
                         <View style={{ height: 1, backgroundColor: '#5d5d5d' }}></View>
 

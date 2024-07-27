@@ -13,10 +13,20 @@ export default function Login({ navigation }: any) {
     const [errorMatkhau, setErrorMatKhau] = useState("")
     const [hidePassword, setHidePassword] = useState(true);
     const [data, setData] = useState<any>();
-    const [loading, setLoading] = useState(false);
-
     const dispatch = useDispatch();
 
+    //lấy tất cả sản phẩm
+    const getAllProduct = async () => {
+        try {
+            const reponse = await ProductController.getAllProduct()
+            if (reponse != null) {
+                setData(reponse);
+                console.log("hihi");
+            }
+        } catch (err) {
+            console.log(err);
+        }
+    }
     const checkNullData = () => {
         let check = true
         if (taikhoan === "admin" && matkhau === "123") {
@@ -44,30 +54,13 @@ export default function Login({ navigation }: any) {
         }
         return check
     }
-
-    //lấy tất cả sản phẩm
-    const getAllProduct = async () => {
-        try {
-            const reponse = await ProductController.getAllProduct()
-            if (reponse != null) {
-                setData(reponse);
-                setLoading(true);
-            }
-        } catch (err) {
-            console.log(err);
-        }
-    }
-
     const checkLogin = async () => {
         if (checkNullData()) {
             try {
                 const check = await userController.checkUserLogin(taikhoan, matkhau);
                 if (check) {
-                    await getAllProduct();
-                    if (loading) {
-                        navigation.navigate('Main', {screen:'Home', params : data})
-                        dispatch(setUser(check))
-                    }
+                    navigation.navigate('Main', { screen: 'Home', params: data })
+                    dispatch(setUser(check))
                 } else {
                     setErrorMatKhau("Sai mật khẩu")
                 }
@@ -76,13 +69,8 @@ export default function Login({ navigation }: any) {
             }
         }
     }
-
-    const updateUser = (check: any) => {
-        dispatch(setUser(check))
-    }
-
     useEffect(() => {
-        getAllProduct();
+        getAllProduct();        
     }, []);
 
     return (
@@ -102,7 +90,7 @@ export default function Login({ navigation }: any) {
                 {hidePassword ?
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Image source={require('../Image/lock.png')} style={style.icon_input}/>
+                            <Image source={require('../Image/lock.png')} style={style.icon_input} />
                             <TextInput style={style.input} placeholder="Password" placeholderTextColor={"white"} onChangeText={text => setMatKhau(text)} />
                         </View>
                         <TouchableOpacity onPress={() => { setHidePassword(!hidePassword) }}>
@@ -112,7 +100,7 @@ export default function Login({ navigation }: any) {
                     :
                     <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
                         <View style={{ flexDirection: 'row' }}>
-                            <Image source={require('../Image/lock.png')} style={style.icon_input}/>
+                            <Image source={require('../Image/lock.png')} style={style.icon_input} />
                             <TextInput style={style.input} placeholder="Password" placeholderTextColor={"white"} secureTextEntry={true} onChangeText={text => setMatKhau(text)} />
                         </View>
                         <TouchableOpacity onPress={() => { setHidePassword(!hidePassword) }}>

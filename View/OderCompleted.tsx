@@ -1,6 +1,6 @@
 import axios from "axios";
 import axiosRetry from "axios-retry";
-import React, { useEffect, useState } from "react";
+import React, {  useCallback, useEffect, useState } from "react";
 import { ActivityIndicator, FlatList, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native"
 import { OderController } from "../Controller/OderController";
 import { useSelector } from "react-redux";
@@ -22,31 +22,31 @@ export default function OderCompleted({ navigation }: any) {
     const getAllOderCompleted = async () => {
         try {
             const reponse = await OderController.getAllOderCompleted(user.id, user.chucvu)
-            if(reponse){
+            if (reponse) {
                 setData(reponse)
-            }else{
+            } else {
                 console.log("Oder completed null data");
             }
         } catch (err) {
             console.log(err);
-        }finally {
+        } finally {
             setLoading(false);
         }
     }
-    useFocusEffect(
-        React.useCallback(() => {
-          getAllOderCompleted();
+    useFocusEffect(() => {
+        useCallback(() => {
+            getAllOderCompleted()
         }, [])
-      );
-
+    });
+    
     const renderItem = ({ item }: any) => {
         return (
             item.anhsp ? (
-                <View style={{ flexDirection: 'row', flex: 1, padding: 10, backgroundColor:"#1f222a" }}>
+                <View style={{ flexDirection: 'row', flex: 1, padding: 10, backgroundColor: "#1f222a" }}>
                     <View>
                         <Image source={{ uri: item.anhsp }} style={[style.image_item, { height: 100, width: 100 }]} />
                     </View>
-    
+
                     <View style={{ flex: 1, flexDirection: 'row', justifyContent: 'space-between' }}>
                         <View style={{ justifyContent: 'space-between' }}>
                             <Text style={style.text_name}>{item.tensp}</Text>
@@ -67,14 +67,15 @@ export default function OderCompleted({ navigation }: any) {
             )
         );
     }
-    
+
 
     const vertiRender = ({ item }: any) => {
         return (
-            <View style={{ flex: 1, marginBottom: 20, backgroundColor: "#1f222a"}}>
+            <View style={{ flex: 1, marginBottom: 20, backgroundColor: "#1f222a" }}>
                 <FlatList
                     data={item.cart}
-                    renderItem={renderItem} />
+                    renderItem={renderItem}
+                    keyExtractor={(item, index) => index.toString()} />
 
                 <View style={{ height: 1, backgroundColor: '#5d5d5d', marginTop: 10 }}></View>
 
@@ -90,7 +91,7 @@ export default function OderCompleted({ navigation }: any) {
         )
     }
     return (
-        <View style= {{flex: 1, backgroundColor: '#1d1d21'}}>
+        <View style={{ flex: 1, backgroundColor: '#1d1d21' }}>
             {loading ?
                 (<View style={{ flex: 1, backgroundColor: '#1d1d21', alignItems: 'center', justifyContent: "center" }} >
                     <ActivityIndicator size="large" color="#0000ff" />
@@ -100,11 +101,12 @@ export default function OderCompleted({ navigation }: any) {
                     <FlatList
                         data={data}
                         renderItem={vertiRender}
-                        style={{ marginTop: 20 }} />
+                        style={{ marginTop: 20 }}
+                        keyExtractor={(item, index) => index.toString()} />
                 </View>)
-                }
+            }
         </View>
-        
+
     )
 }
 
